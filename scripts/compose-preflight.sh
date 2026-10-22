@@ -18,8 +18,9 @@ docker info >/dev/null 2>&1 || die "Docker is not running (start Docker Desktop,
 compose_version="$(docker compose version --short 2>/dev/null || true)"
 [ -n "$compose_version" ] || die "Docker Compose v2 is required ('docker compose', not 'docker-compose')."
 major="${compose_version%%.*}"; rest="${compose_version#*.}"; minor="${rest%%.*}"
-if [ "$major" -lt 2 ] || { [ "$major" -eq 2 ] && [ "$minor" -lt 20 ]; }; then
-  die "Docker Compose $compose_version is too old; 2.20 or newer is required."
+patch="${rest#*.}"; patch="${patch%%[^0-9]*}"
+if [ "$major" -lt 2 ] || { [ "$major" -eq 2 ] && { [ "$minor" -lt 24 ] || { [ "$minor" -eq 24 ] && [ "${patch:-0}" -lt 4 ]; }; }; }; then
+  die "Docker Compose $compose_version is too old; 2.24.4 or newer is required (Stepnoe port override)."
 fi
 
 mem_bytes="$(docker info --format '{{.MemTotal}}')"

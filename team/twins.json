@@ -1,0 +1,881 @@
+{
+  "org.stepnoe:Stepnoe": {
+    "policyId": "default:basic_policy",
+    "attributes": {
+      "name": "Stepnoe",
+      "_isType": false,
+      "kind": "mine",
+      "data_source": "synthetic deterministic simulation",
+      "fictional": true
+    },
+    "features": {
+      "mined": {
+        "properties": {
+          "value": 0,
+          "unit": "t"
+        }
+      },
+      "shipped": {
+        "properties": {
+          "value": 0,
+          "unit": "t"
+        }
+      },
+      "state": {
+        "properties": {
+          "value": "BALANCE OK"
+        }
+      },
+      "simulation_time": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "revision": {
+        "properties": {
+          "value": 0
+        }
+      }
+    }
+  },
+  "org.stepnoe:Pit": {
+    "policyId": "default:basic_policy",
+    "attributes": {
+      "name": "Pit",
+      "_isType": false,
+      "kind": "pit",
+      "data_source": "synthetic deterministic simulation",
+      "fictional": true,
+      "_parents": "org.stepnoe:Stepnoe",
+      "parents": [
+        "org.stepnoe:Stepnoe"
+      ]
+    },
+    "features": {
+      "mined": {
+        "properties": {
+          "value": 0,
+          "unit": "t"
+        }
+      },
+      "simulation_time": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "revision": {
+        "properties": {
+          "value": 0
+        }
+      }
+    }
+  },
+  "org.stepnoe:Excavator_01": {
+    "policyId": "default:basic_policy",
+    "attributes": {
+      "name": "Excavator_01",
+      "_isType": false,
+      "kind": "excavator",
+      "data_source": "synthetic deterministic simulation",
+      "fictional": true,
+      "_parents": "org.stepnoe:Pit",
+      "parents": [
+        "org.stepnoe:Pit"
+      ]
+    },
+    "features": {
+      "bucket_weight": {
+        "properties": {
+          "value": 22.5,
+          "unit": "t"
+        }
+      },
+      "passes": {
+        "properties": {
+          "value": 0
+        }
+      },
+      "mined": {
+        "properties": {
+          "value": 0,
+          "unit": "t"
+        }
+      },
+      "state": {
+        "properties": {
+          "value": "loading"
+        }
+      },
+      "simulation_time": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "revision": {
+        "properties": {
+          "value": 0
+        }
+      }
+    }
+  },
+  "org.stepnoe:Truck_01": {
+    "policyId": "default:basic_policy",
+    "attributes": {
+      "name": "Truck_01",
+      "_isType": false,
+      "kind": "truck",
+      "data_source": "synthetic deterministic simulation",
+      "fictional": true,
+      "_parents": "org.stepnoe:Pit",
+      "parents": [
+        "org.stepnoe:Pit"
+      ],
+      "capacity_t": 90
+    },
+    "features": {
+      "lat": {
+        "properties": {
+          "value": 52.1
+        }
+      },
+      "lon": {
+        "properties": {
+          "value": 63.1
+        }
+      },
+      "weight": {
+        "properties": {
+          "value": 0,
+          "unit": "t"
+        }
+      },
+      "speed": {
+        "properties": {
+          "value": 0,
+          "unit": "km/h"
+        }
+      },
+      "state": {
+        "properties": {
+          "value": "loading"
+        }
+      },
+      "geofence": {
+        "properties": {
+          "value": "INSIDE"
+        }
+      },
+      "trips": {
+        "properties": {
+          "value": 0
+        }
+      },
+      "simulation_time": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "revision": {
+        "properties": {
+          "value": 0
+        }
+      }
+    }
+  },
+  "org.stepnoe:Truck_02": {
+    "policyId": "default:basic_policy",
+    "attributes": {
+      "name": "Truck_02",
+      "_isType": false,
+      "kind": "truck",
+      "data_source": "synthetic deterministic simulation",
+      "fictional": true,
+      "_parents": "org.stepnoe:Pit",
+      "parents": [
+        "org.stepnoe:Pit"
+      ],
+      "capacity_t": 90
+    },
+    "features": {
+      "lat": {
+        "properties": {
+          "value": 52.1
+        }
+      },
+      "lon": {
+        "properties": {
+          "value": 63.1
+        }
+      },
+      "weight": {
+        "properties": {
+          "value": 0,
+          "unit": "t"
+        }
+      },
+      "speed": {
+        "properties": {
+          "value": 0,
+          "unit": "km/h"
+        }
+      },
+      "state": {
+        "properties": {
+          "value": "queued"
+        }
+      },
+      "geofence": {
+        "properties": {
+          "value": "INSIDE"
+        }
+      },
+      "trips": {
+        "properties": {
+          "value": 0
+        }
+      },
+      "simulation_time": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "revision": {
+        "properties": {
+          "value": 0
+        }
+      }
+    }
+  },
+  "org.stepnoe:Processing_Plant": {
+    "policyId": "default:basic_policy",
+    "attributes": {
+      "name": "Processing_Plant",
+      "_isType": false,
+      "kind": "plant",
+      "data_source": "synthetic deterministic simulation",
+      "fictional": true,
+      "_parents": "org.stepnoe:Stepnoe",
+      "parents": [
+        "org.stepnoe:Stepnoe"
+      ]
+    },
+    "features": {
+      "raw_inflow": {
+        "properties": {
+          "value": 0,
+          "unit": "t"
+        }
+      },
+      "concentrate": {
+        "properties": {
+          "value": 0,
+          "unit": "t"
+        }
+      },
+      "tails": {
+        "properties": {
+          "value": 0,
+          "unit": "t"
+        }
+      },
+      "buffer": {
+        "properties": {
+          "value": 0,
+          "unit": "t"
+        }
+      },
+      "feed_grade": {
+        "properties": {
+          "value": 44,
+          "unit": "% Fe"
+        }
+      },
+      "concentrate_grade": {
+        "properties": {
+          "value": 55,
+          "unit": "% Fe"
+        }
+      },
+      "recovery": {
+        "properties": {
+          "value": 83.5,
+          "unit": "%"
+        }
+      },
+      "tails_grade": {
+        "properties": {
+          "value": 0,
+          "unit": "% Fe"
+        }
+      },
+      "simulation_time": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "revision": {
+        "properties": {
+          "value": 0
+        }
+      }
+    }
+  },
+  "org.stepnoe:Stockpile_01": {
+    "policyId": "default:basic_policy",
+    "attributes": {
+      "name": "Stockpile_01",
+      "_isType": false,
+      "kind": "stockpile",
+      "data_source": "synthetic deterministic simulation",
+      "fictional": true,
+      "_parents": "org.stepnoe:Processing_Plant",
+      "parents": [
+        "org.stepnoe:Processing_Plant"
+      ],
+      "density_t_m3": 2.7,
+      "geometry": "elliptic cone",
+      "radius_x_m": 25,
+      "radius_z_m": 15,
+      "sensor": "synthetic LiDAR"
+    },
+    "features": {
+      "volume": {
+        "properties": {
+          "value": 1111.111111111111,
+          "unit": "m3"
+        }
+      },
+      "weight": {
+        "properties": {
+          "value": 3000.0,
+          "unit": "t"
+        }
+      },
+      "book_weight": {
+        "properties": {
+          "value": 3000.0,
+          "unit": "t"
+        }
+      },
+      "density": {
+        "properties": {
+          "value": 2.7,
+          "unit": "t/m3"
+        }
+      },
+      "moisture": {
+        "properties": {
+          "value": 0,
+          "unit": "%"
+        }
+      },
+      "height": {
+        "properties": {
+          "value": 2.8294212105225838,
+          "unit": "m"
+        }
+      },
+      "fraud": {
+        "properties": {
+          "value": 0
+        }
+      },
+      "simulation_time": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "revision": {
+        "properties": {
+          "value": 0
+        }
+      }
+    }
+  },
+  "org.stepnoe:Mass_Balance": {
+    "policyId": "default:basic_policy",
+    "attributes": {
+      "name": "Mass_Balance",
+      "_isType": false,
+      "kind": "audit",
+      "data_source": "synthetic deterministic simulation",
+      "fictional": true,
+      "_parents": "org.stepnoe:Stepnoe",
+      "parents": [
+        "org.stepnoe:Stepnoe"
+      ]
+    },
+    "features": {
+      "physical_stock": {
+        "properties": {
+          "value": 3000.0,
+          "unit": "t"
+        }
+      },
+      "book_stock": {
+        "properties": {
+          "value": 3000.0,
+          "unit": "t"
+        }
+      },
+      "scan_volume": {
+        "properties": {
+          "value": 1111.111111111111
+        }
+      },
+      "height": {
+        "properties": {
+          "value": 2.8294212105225838
+        }
+      },
+      "fraud_offset": {
+        "properties": {
+          "value": 0,
+          "unit": "t"
+        }
+      },
+      "discrepancy_pct": {
+        "properties": {
+          "value": 0.0
+        }
+      },
+      "stock_residual": {
+        "properties": {
+          "value": 0.0,
+          "unit": "t"
+        }
+      },
+      "physical_residual": {
+        "properties": {
+          "value": 0.0,
+          "unit": "t"
+        }
+      },
+      "book_residual": {
+        "properties": {
+          "value": 0.0,
+          "unit": "t"
+        }
+      },
+      "fe_residual": {
+        "properties": {
+          "value": 0.0,
+          "unit": "t"
+        }
+      },
+      "inventory": {
+        "properties": {
+          "value": 3000.0,
+          "unit": "t"
+        }
+      },
+      "anomaly": {
+        "properties": {
+          "value": 0
+        }
+      },
+      "status": {
+        "properties": {
+          "value": "BALANCE OK"
+        }
+      },
+      "simulation_time": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "revision": {
+        "properties": {
+          "value": 0
+        }
+      }
+    }
+  },
+  "org.stepnoe:Rail_Siding": {
+    "policyId": "default:basic_policy",
+    "attributes": {
+      "name": "Rail_Siding",
+      "_isType": false,
+      "kind": "rail-siding",
+      "data_source": "synthetic deterministic simulation",
+      "fictional": true,
+      "_parents": "org.stepnoe:Stepnoe",
+      "parents": [
+        "org.stepnoe:Stepnoe"
+      ]
+    },
+    "features": {
+      "loaded": {
+        "properties": {
+          "value": 0,
+          "unit": "t"
+        }
+      },
+      "shipped": {
+        "properties": {
+          "value": 0,
+          "unit": "t"
+        }
+      },
+      "departures": {
+        "properties": {
+          "value": 0
+        }
+      },
+      "state": {
+        "properties": {
+          "value": "loading"
+        }
+      },
+      "simulation_time": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "revision": {
+        "properties": {
+          "value": 0
+        }
+      }
+    }
+  },
+  "org.stepnoe:Wagon_01": {
+    "policyId": "default:basic_policy",
+    "attributes": {
+      "name": "Wagon_01",
+      "_isType": false,
+      "kind": "wagon",
+      "data_source": "synthetic deterministic simulation",
+      "fictional": true,
+      "_parents": "org.stepnoe:Rail_Siding",
+      "parents": [
+        "org.stepnoe:Rail_Siding"
+      ],
+      "capacity_t": 70
+    },
+    "features": {
+      "lat": {
+        "properties": {
+          "value": 52.12
+        }
+      },
+      "lon": {
+        "properties": {
+          "value": 63.13
+        }
+      },
+      "weight": {
+        "properties": {
+          "value": 0.0,
+          "unit": "t"
+        }
+      },
+      "weighbridge": {
+        "properties": {
+          "value": 0,
+          "unit": "t"
+        }
+      },
+      "state": {
+        "properties": {
+          "value": "loading"
+        }
+      },
+      "speed": {
+        "properties": {
+          "value": 0,
+          "unit": "km/h"
+        }
+      },
+      "geofence": {
+        "properties": {
+          "value": "INSIDE"
+        }
+      },
+      "simulation_time": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "revision": {
+        "properties": {
+          "value": 0
+        }
+      }
+    }
+  },
+  "org.stepnoe:Wagon_02": {
+    "policyId": "default:basic_policy",
+    "attributes": {
+      "name": "Wagon_02",
+      "_isType": false,
+      "kind": "wagon",
+      "data_source": "synthetic deterministic simulation",
+      "fictional": true,
+      "_parents": "org.stepnoe:Rail_Siding",
+      "parents": [
+        "org.stepnoe:Rail_Siding"
+      ],
+      "capacity_t": 70
+    },
+    "features": {
+      "lat": {
+        "properties": {
+          "value": 52.12
+        }
+      },
+      "lon": {
+        "properties": {
+          "value": 63.13015
+        }
+      },
+      "weight": {
+        "properties": {
+          "value": 0.0,
+          "unit": "t"
+        }
+      },
+      "weighbridge": {
+        "properties": {
+          "value": 0,
+          "unit": "t"
+        }
+      },
+      "state": {
+        "properties": {
+          "value": "loading"
+        }
+      },
+      "speed": {
+        "properties": {
+          "value": 0,
+          "unit": "km/h"
+        }
+      },
+      "geofence": {
+        "properties": {
+          "value": "INSIDE"
+        }
+      },
+      "simulation_time": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "revision": {
+        "properties": {
+          "value": 0
+        }
+      }
+    }
+  },
+  "org.stepnoe:Wagon_03": {
+    "policyId": "default:basic_policy",
+    "attributes": {
+      "name": "Wagon_03",
+      "_isType": false,
+      "kind": "wagon",
+      "data_source": "synthetic deterministic simulation",
+      "fictional": true,
+      "_parents": "org.stepnoe:Rail_Siding",
+      "parents": [
+        "org.stepnoe:Rail_Siding"
+      ],
+      "capacity_t": 70
+    },
+    "features": {
+      "lat": {
+        "properties": {
+          "value": 52.12
+        }
+      },
+      "lon": {
+        "properties": {
+          "value": 63.130300000000005
+        }
+      },
+      "weight": {
+        "properties": {
+          "value": 0.0,
+          "unit": "t"
+        }
+      },
+      "weighbridge": {
+        "properties": {
+          "value": 0,
+          "unit": "t"
+        }
+      },
+      "state": {
+        "properties": {
+          "value": "loading"
+        }
+      },
+      "speed": {
+        "properties": {
+          "value": 0,
+          "unit": "km/h"
+        }
+      },
+      "geofence": {
+        "properties": {
+          "value": "INSIDE"
+        }
+      },
+      "simulation_time": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "revision": {
+        "properties": {
+          "value": 0
+        }
+      }
+    }
+  },
+  "org.stepnoe:Wagon_04": {
+    "policyId": "default:basic_policy",
+    "attributes": {
+      "name": "Wagon_04",
+      "_isType": false,
+      "kind": "wagon",
+      "data_source": "synthetic deterministic simulation",
+      "fictional": true,
+      "_parents": "org.stepnoe:Rail_Siding",
+      "parents": [
+        "org.stepnoe:Rail_Siding"
+      ],
+      "capacity_t": 70
+    },
+    "features": {
+      "lat": {
+        "properties": {
+          "value": 52.12
+        }
+      },
+      "lon": {
+        "properties": {
+          "value": 63.13045
+        }
+      },
+      "weight": {
+        "properties": {
+          "value": 0.0,
+          "unit": "t"
+        }
+      },
+      "weighbridge": {
+        "properties": {
+          "value": 0,
+          "unit": "t"
+        }
+      },
+      "state": {
+        "properties": {
+          "value": "loading"
+        }
+      },
+      "speed": {
+        "properties": {
+          "value": 0,
+          "unit": "km/h"
+        }
+      },
+      "geofence": {
+        "properties": {
+          "value": "INSIDE"
+        }
+      },
+      "simulation_time": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "revision": {
+        "properties": {
+          "value": 0
+        }
+      }
+    }
+  },
+  "org.stepnoe:Wagon_05": {
+    "policyId": "default:basic_policy",
+    "attributes": {
+      "name": "Wagon_05",
+      "_isType": false,
+      "kind": "wagon",
+      "data_source": "synthetic deterministic simulation",
+      "fictional": true,
+      "_parents": "org.stepnoe:Rail_Siding",
+      "parents": [
+        "org.stepnoe:Rail_Siding"
+      ],
+      "capacity_t": 70
+    },
+    "features": {
+      "lat": {
+        "properties": {
+          "value": 52.12
+        }
+      },
+      "lon": {
+        "properties": {
+          "value": 63.1306
+        }
+      },
+      "weight": {
+        "properties": {
+          "value": 0.0,
+          "unit": "t"
+        }
+      },
+      "weighbridge": {
+        "properties": {
+          "value": 0,
+          "unit": "t"
+        }
+      },
+      "state": {
+        "properties": {
+          "value": "loading"
+        }
+      },
+      "speed": {
+        "properties": {
+          "value": 0,
+          "unit": "km/h"
+        }
+      },
+      "geofence": {
+        "properties": {
+          "value": "INSIDE"
+        }
+      },
+      "simulation_time": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "revision": {
+        "properties": {
+          "value": 0
+        }
+      }
+    }
+  }
+}

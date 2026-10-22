@@ -22,6 +22,8 @@ deploy/compose/.example-mine
 
 __pycache__/
 *.pyc
+.local-deps/
+team/*.db*
 
 # Demo Unity scene, downloaded by `make unity-demo` (88 MB, lives in a release)
 build/WebGL Build.loader.js

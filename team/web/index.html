@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Степное · цифровой баланс</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><div class="brand"><span class="mark">С</span><div><strong>СТЕПНОЕ</strong><small>ЦИФРОВОЙ РУДНИК / OPENEGIZ</small></div></div><div class="live" id="connection">Соединение…</div></header>
+<main>
+  <section class="heading"><div><p class="eyebrow">ОТ ФИЗИЧЕСКОГО ПОТОКА К УЧЕТУ</p><h1 id="title">Прозрачность каждой тонны</h1><p id="subtitle">Синтетический производственный стенд · сухая масса · виртуальный объект</p></div><div class="clock"><span>ВИРТУАЛЬНОЕ ВРЕМЯ</span><strong id="clock">—</strong></div></section>
+  <section class="metrics"><article><label>3D-скан склада</label><strong id="physical">—</strong><small>Физический остаток, т</small></article><article><label>Учетный остаток</label><strong id="book">—</strong><small>Бумажный отчет, т</small></article><article><label>Неподтвержденная масса</label><strong id="offset">—</strong><small id="percent">Сверка с физическими датчиками</small></article><article><label>Физический баланс</label><strong id="residual">—</strong><small>Начальный запас + вход − выход − запас, т</small></article></section>
+  <section id="mine" class="surface"><div class="surface-title"><div><span class="dot"></span>3D МОДЕЛЬ ПРОИЗВОДСТВА</div><span>Вращение: перетаскивание · масштаб: колесо · выбор: клик</span></div><canvas id="scene" aria-label="Интерактивная трехмерная модель склада и рудника"></canvas><div class="legend"><span><i class="cyan"></i>Физическая геометрия</span><span><i class="red"></i>Приписка (не физический объем)</span><span id="geometry">—</span></div><div id="selection" class="selection">Выберите объект на сцене</div></section>
+  <section id="controls" class="surface controls"><div><p class="eyebrow">ANTI-FRAUD CONTROLS</p><h2>Simulate Paper Fraud</h2><p id="mode">Приписка +300 т в учетном отчете</p><small>MQTT → независимая сверка весовых и 3D-скана → аудиторский след</small></div><div><label class="switch"><input type="checkbox" id="fraud" aria-label="Simulate Paper Fraud"><span></span></label><strong id="toggle-state">OFF</strong><button id="reset">Сбросить сценарий</button></div><div class="status" id="status">Ожидание данных</div><p id="command" role="status"></p></section>
+  <section id="chart-section" class="surface"><div class="surface-title">ФИЗИЧЕСКИЙ СКЛАД И УЧЕТ <span>Тонны / виртуальное время · последние 900 отсчетов</span></div><canvas id="chart" aria-label="График физического и учетного остатка"></canvas><div class="legend"><span><i class="cyan"></i>3D-скан</span><span><i class="red"></i>Учет</span></div></section>
+  <section id="map-section" class="surface"><div class="surface-title">LOGISTICS & GEOFENCING <select id="extent" aria-label="Область карты"><option value="mine">Карьер и фабрика</option><option value="rail">ЖД-коридор 65 км</option></select></div><canvas id="map" aria-label="Координатная карта маршрутов самосвалов и вагонов"></canvas><div class="legend">Локальная координатная карта без внешних тайлов · коридор ±150 м · следы текущего сеанса браузера</div><div id="vehicles" class="vehicles"></div></section>
+  <section id="events-section" class="surface"><div class="surface-title">АУДИТОРСКИЙ СЛЕД <span>Сохраняется в SQLite при перезапусках</span></div><div class="table-scroll"><table><thead><tr><th>№</th><th>Время UTC</th><th>Команда</th><th>Физический, т</th><th>Учетный, т</th><th>Источник</th></tr></thead><tbody id="events"></tbody></table></div></section>
+  <footer>Вымышленный ГОК «Степное» · все датчики моделируются · ρ = 2.7 т/м³ · влажность 0% · 3D Canvas, без Unity</footer>
+</main>
+<script src="app.js"></script>
+</body></html>

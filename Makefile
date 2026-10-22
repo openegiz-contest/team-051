@@ -3,7 +3,7 @@
 # ---------------------------------------------------------------------------
 # Docker Compose deployment (laptops, CI, contest judges): deploy/compose/
 # ---------------------------------------------------------------------------
-COMPOSE_BASE := docker compose -f deploy/compose/docker-compose.yml
+COMPOSE_BASE := docker compose -f deploy/compose/docker-compose.yml -f deploy/compose/stepnoe.yml
 # Once `make example-mine` has run, every compose command also loads the mine
 # overlay, so `down` stops its simulator and `up` keeps its Grafana dashboard.
 # `make clean` forgets it.
@@ -38,6 +38,13 @@ logs:
 ## End-to-end check of the running compose stack
 smoke:
 	@bash scripts/compose-smoke.sh
+
+.PHONY: team-test team-smoke
+team-test:
+	python3 -m unittest discover -s team/tests -v
+
+team-smoke:
+	@bash scripts/team-smoke.sh
 
 ## Run the Example Mine (twins + haul-cycle simulator + Grafana dashboard) on the compose stack
 example-mine: up
@@ -142,5 +149,5 @@ lint:
 	git ls-files -z 'scripts/*.sh' 'deploy/*.sh' | xargs -0 shellcheck --severity=warning
 	git ls-files -z '*.py' | xargs -0 python3 -c 'import ast, sys; [ast.parse(open(f, encoding="utf-8").read(), f) for f in sys.argv[1:]]'
 	@bash scripts/compose-env.sh
-	docker compose -f deploy/compose/docker-compose.yml config -q
+	$(COMPOSE_BASE) config -q
 	@echo "lint: ok"

@@ -1,43 +1,217 @@
-# <Team name>: a digital mine on OpenEgiz
+# ГОК «Степное»: сквозной баланс массы на OpenEgiz
 
-> Team Repository of the contest “Digital Mine on OpenEgiz”. **Replace the contents of this file with the instructions for your Submission.** The AI Jury runs the Submission strictly by these instructions, from scratch, in the Judge Environment. Accepted languages: English, Kazakh, Russian.
+Цифровой двойник вымышленного железорудного ГОК: экскаватор, два самосвала,
+обогатительная фабрика, 3D-склад и пять вагонов. Решение для финансовых
+контролеров, аудиторов и руководства: сопоставляет физические потоки и
+учетные остатки, показывает неподтвержденную массу и сохраняет команды
+сценария в журнале. Концепция команды — в [SUBMISSION.md](SUBMISSION.md).
 
-> **Start with the Concept**, the first section of [SUBMISSION.md](SUBMISSION.md): the Team writes it before any code. What AI agents build from this Template without a Concept is the Default Solution, published on the [contest site](https://openegiz-contest.github.io/) as the low bar: a Submission that does not go beyond it gets low levels in the Rubric. AI agents read [AGENTS.md](AGENTS.md).
+Весь поток данных **синтетический**. Внешние датасеты не скачиваются;
+LiDAR, GPS, ERP и весовые моделируются. Параметры заданы в исходниках.
+Встроенный 3D-вид реализован средствами Canvas, без скомпилированной Unity-сцены.
 
-## Running
+## Запуск с нуля: буквальные команды для сборщика
 
-Requirements (Docker, `make`, Windows/WSL2 setup) are in [OPENEGIZ.md](OPENEGIZ.md) / [OPENEGIZ.ru.md](OPENEGIZ.ru.md).
+Среда: Linux amd64/arm64 либо Ubuntu в WSL2; Docker Engine/Desktop с доступным
+демоном, Docker Compose **2.24.4+**, минимум 6 ГБ памяти Docker, Git, Bash, curl,
+make. Для первой сборки необходим интернет (образы Docker, PyPI и исходники
+штатного extended API платформы). Windows: Docker Desktop с WSL integration;
+команды ниже выполняются **в Ubuntu**, не в PowerShell. Подготовка WSL —
+[OPENEGIZ.ru.md](OPENEGIZ.ru.md).
+
+На Ubuntu/Debian, если утилиты отсутствуют:
 
 ```bash
-sudo apt install -y make   # if make is missing (clean Ubuntu)
-make up            # the OpenEgiz platform
-make example-mine  # the Example Mine: twins, simulator, dashboard
+sudo apt-get update
+sudo apt-get install -y git make curl
+docker version
+docker compose version
 ```
 
-Replace these commands with the commands of your Submission. The Submission must start by following these instructions without manual intervention (Rules, clause 6.4); downloading datasets and models and building are also listed here.
+Из чистого каталога, с настроенным доступом GitHub к репозиторию команды:
 
-## What to open
+```bash
+git clone https://github.com/openegiz-contest/team-051.git
+cd team-051
+make up
+make team-smoke
+```
 
-- Grafana: the address and login are printed by `make up`.
-- <where to see the mine visualization, which dashboards>
+Если репозиторий уже предоставлен сборщику, перейти в его корень и выполнить
+последние две команды. `make example-mine` не требуется.
 
-## Repository contents
+`make up` генерирует пароли в `deploy/compose/.env`, собирает сервис команды,
+запускает OpenEgiz, создает 14 двойников с иерархией и автоматически подключает
+три дашборда. Начальные остатки — 3000 т концентрата; телеметрия идет сразу.
+Моделирование ускорено в 30 раз: один реальный тик в секунду равен 30 с модели.
+Первые разгрузки руды появляются примерно через 20 секунд после старта сервиса,
+первая отправка пяти вагонов — примерно через 210 секунд. Графики InfluxDB
+отстают от состояния модели на период сброса Telegraf, обычно около 10 секунд.
 
-| Path | Contents |
+Дождаться успешного завершения обеих команд. `make team-smoke` проверяет
+двойники, Grafana, производственный цикл, команды `0 → 1 → 0`, изменение
+состояния Ditto и запись аномалии в InfluxDB. В конце сценарий выключен.
+Ошибки приводят к ненулевому коду выхода; ручной импорт JSON не нужен.
+
+Буквальный эквивалент запуска без make (из корня):
+
+```bash
+bash scripts/compose-env.sh
+bash scripts/compose-preflight.sh
+docker compose -f deploy/compose/docker-compose.yml -f deploy/compose/stepnoe.yml up -d --build --wait --wait-timeout 900
+bash scripts/compose-wait-ready.sh
+bash scripts/compose-urls.sh
+bash scripts/team-smoke.sh
+```
+
+Сервис команды зависит от успешного завершения `init` и `stepnoe-setup`;
+`stand` становится healthy только после запуска Grafana и модели.
+
+## Что открыть
+
+Открыть [Grafana](http://localhost:3000), войти как `admin` с паролем,
+напечатанным `make up`. Пароль **не** `admin`. При необходимости посмотреть
+только его:
+
+```bash
+sed -n 's/^GRAFANA_ADMIN_PASSWORD=//p' deploy/compose/.env
+```
+
+После входа доступны:
+
+| Адрес | Содержимое |
 |---|---|
-| `team/` | Directory for the Team's code. Using it is optional: any part may be changed, including the platform core |
-| `SUBMISSION.md` | Description of the Submission: **required** |
-| `presentation.pdf` | Presentation: **required**, in the repository root |
-| `AGENTS.md`, `CLAUDE.md` | Instructions for your AI agents (Codex, Claude Code and others read them automatically) |
-| `examples/mine/` | The Example Mine: shows how a digital mine is built on OpenEgiz. It is not a basis for the Submission |
-| `OPENEGIZ.md`, `OPENEGIZ.ru.md` | Documentation of the OpenEgiz platform v1.0.4 |
+| [Executive Overview & 3D Mine View](http://localhost:3000/d/stepnoe-overview) | 3D-склад, фабрика, самосвалы, остатки и физические потоки |
+| [Mass Balance & Anti-Fraud Audit](http://localhost:3000/d/stepnoe-audit) | Балансы массы/Fe, учет против 3D-скана, статус и переключатель |
+| [Logistics & Geofencing](http://localhost:3000/d/stepnoe-logistics) | Координатная карта, следы техники, коридоры ±150 м, загрузка вагонов |
+| [Полный интерфейс стенда](http://localhost:3000/stepnoe/) | Все три представления и журнал команд на одной странице |
 
-The Submission is the `main` branch at the moment of the Freeze; other branches are not evaluated.
+В Grafana: **Dashboards → Stepnoe**. Иерархия двойников — в приложении
+**OpenEgiz → Twins**, корень `org.stepnoe:Stepnoe`. Для платформы 1.0.4
+иерархию задает строковый атрибут `_parents`; также записывается `parents[]`.
+3D-вид и карта читают двойники из API Ditto; графики Grafana — из InfluxDB.
+Состояние модели напрямую в визуализацию не передается (правила, п. 6.2).
+Все браузерные запросы идут через один адрес стенда; менять порты в JSON
+или устанавливать плагины вручную не требуется. Если изменен `GRAFANA_PORT`
+в `.env`, использовать соответствующий порт в браузере.
 
-## License
+## What-if: Simulate Paper Fraud
 
-The Submission is distributed under the MIT license, see [LICENSE](LICENSE). Copyright belongs to the Team: add the line `Copyright (c) 2026 <Team members>` to `LICENSE`.
+На дашборде аудита включить **Simulate Paper Fraud**. Команда публикуется в
+`telemetry/stockpile/inject_fraud`; модель оставляет физические датчики
+неизменными и увеличивает только учетный остаток на **300 т**. Появляются
+красный статус `CRITICAL ANOMALY: Mass Balance Mismatch`, отрицательный
+учетный остаточный баланс и расхождение графиков. Выключить переключатель
+или нажать «Сбросить сценарий»: статус возвращается к `BALANCE OK`, журнал
+сохраняется. Кнопка дожидается подтверждения нового состояния.
 
----
+Точные команды MQTT, не требующие MQTT-клиента на машине сборщика:
 
-Platform: [aleka07/openegiz](https://github.com/aleka07/openegiz). If the platform was useful to you, support the project with a star on GitHub.
+```bash
+# ON
+docker compose -f deploy/compose/docker-compose.yml -f deploy/compose/stepnoe.yml exec -T mosquitto mosquitto_pub -h localhost -t telemetry/stockpile/inject_fraud -m 1 -q 1 -r
+# OFF / RESET
+docker compose -f deploy/compose/docker-compose.yml -f deploy/compose/stepnoe.yml exec -T mosquitto mosquitto_pub -h localhost -t telemetry/stockpile/inject_fraud -m 0 -q 1 -r
+```
+
+Поддерживаются только байты `1` и `0`. Повторная `1` не накапливает приписку.
+Retained-команда и SQLite сохраняют сценарий при перезапуске. Сброс передается
+как retained `0`. 300 т равны 10% **начального** склада, процент от текущего
+остатка вычисляется динамически, поэтому не зашит как 10.4%.
+
+Для режима строго +10% от текущей массы добавить строку `FRAUD_MODE=percent`
+в `deploy/compose/.env` и повторить `make up`. По умолчанию `FRAUD_MODE=fixed`.
+Аналогично `SIM_SPEEDUP=30` задает ускорение времени.
+
+## Физическая модель и ограничения
+
+Все массы приведены к сухому веществу, влажность установлена в 0%; 2.7 т/м³ —
+принятая **эффективная насыпная** плотность модели. Геометрия синтетического
+скана — эллиптический конус с полуосями 25 и 15 м:
+`V = π × 25 × 15 × h / 3`, `M = ρ × V`. Визуализация показывает эту геометрию;
+реальные облака точек не обрабатываются. Поворот сцены — перетаскиванием,
+масштаб — колесом, выбор объекта — кликом.
+
+Самосвалы: 90 т, четыре ковша по 22.5 т, погрузка 120 с, рейс 360 с,
+разгрузка 40 с, возврат 360 с. Фабрика: до 600 т/ч, Fe входа 43–45%,
+извлечение железа 83.5%, Fe концентрата 55%. Выход концентрата рассчитывается
+как `feed × grade × recovery / 0.55`, хвосты — как разность масс; железо
+хвостов учитывается отдельно. Вагоны по 70 т, загрузка 200 т/ч, ЖД-коридор
+65 км при 40 км/ч. Точки на карте условные, объект вымышленный.
+
+Проверяются независимые уравнения:
+
+```text
+Фабрика: feed − concentrate − tails = 0
+Склад:   opening_stock + concentrate − rail_loaded − scanned_stock = 0
+ГОК:     opening_stock + mined − tails − shipped
+         − (scanned_stock + raw_buffer + truck_payload + wagons_on_site) = 0
+Железо:  opening_Fe + mined_Fe − tails_Fe − shipped_Fe − inventory_Fe = 0
+Учет:    opening_stock + concentrate − rail_loaded − book_stock = 0
+```
+
+Граница отгрузки — ЖД-весовая при отправлении полностью загруженных пяти
+вагонов. Вагон в пути уже включен в `shipped`, поэтому второй раз в запасах
+не учитывается. Порог аномалии — абсолютный остаток более 1 т. При потере
+MQTT виртуальное время останавливается; после восстановления публикуются
+полные состояния. Доставка MQTT QoS 1 подтверждает прием брокером;
+сквозное применение в Ditto/InfluxDB проверяется отдельным smoke-тестом.
+
+Карта строится локально без интернет-тайлов. Геозона вычисляется по расстоянию
+до сегмента; штатные маршруты остаются внутри коридора. Отдельного сценария
+съезда с маршрута сейчас нет. Следы карты хранятся в браузере, история
+датчиков — в InfluxDB, команды и состояние — в Docker-томе `stepnoe-data`.
+Текстовая панель Grafana разрешает локальный iframe; команды HTTP требуют
+сессии Grafana. Как и исходная платформа, стенд рассчитан на локальную среду
+(MQTT без аутентификации). Полноценная интеграция ERP/IoT не реализована.
+
+## Проверки и эксплуатация
+
+```bash
+make team-test                  # 18 тестов модели, Fe, API, Ditto-адаптера, журнала
+make team-smoke                 # реальный сквозной тест, нужен запущенный стек
+make smoke                      # штатный smoke-тест OpenEgiz
+make ps
+make logs S=stepnoe
+make down                       # остановить, сохранив все данные
+make up                         # продолжить с сохраненными остатками
+```
+
+`make team-test` требует Python 3.10+ на хосте; `team-smoke` выполняется внутри
+контейнера и не требует Python на хосте. Для повторной генерации статических
+моделей и дашбордов: `python3 team/generate_assets.py`.
+
+`make clean` **удаляет все данные платформы, журнал, состояние и пароли**.
+Использовать только для намеренного запуска с чистого состояния.
+
+В среде разработки 22.10.2026 выполнены 18 unit/integration-тестов, тест с
+настоящим локальным MQTT-брокером, проверка Compose 2.40.3 `config -q`,
+проверки синтаксиса Python/JavaScript/Bash и браузерная проверка переключателя,
+карты, 3D-сцены и мобильного вида. В тесте транспорта API Ditto подменен
+HTTP-заглушкой; это не подтверждение работы реального Ditto. Полная сборка Docker и запуск
+OpenEgiz здесь **не подтверждены**: Docker/WSL отсутствуют. Поэтому до
+конкурсной сдачи обязателен успешный запуск `make up && make team-smoke`
+в среде сборщика. Не следует трактовать статическую проверку как успешную
+сборку всех образов.
+
+Правила конкурса проверены по [официальной редакции](https://openegiz-contest.github.io/rules/):
+пространственная визуализация допускает любую технологию (п. 9.1),
+а ее данные должны поступать из платформы (п. 6.2). Для окончательной
+конкурсной сдачи отдельно необходим `presentation.pdf` (п. 6.5);
+этот файл в текущем репозитории отсутствует и в техническую реализацию не входит.
+
+## Структура
+
+| Путь | Назначение |
+|---|---|
+| `team/model.py` | Детерминированные циклы, масса/Fe, геометрия, геозоны, сценарий |
+| `team/service.py` | MQTT, HTTP, SQLite, readiness и журнал |
+| `team/twins.json`, `team/setup_twins.py` | Модели Ditto и идемпотентная установка |
+| `team/dashboards/` | Три автоматически подключаемых дашборда Grafana |
+| `team/web/`, `team/nginx.conf` | Встроенные 3D/карта/управление и единый адрес стенда |
+| `deploy/compose/stepnoe.yml` | Сборка и запуск сервиса команды |
+| `team/tests/`, `team/smoke.py` | Проверки модели, транспорта и полного стека |
+
+Код команды — MIT, `Copyright (c) 2026 sudiksss`. Лицензии платформы и
+сторонних компонентов сохранены в [LICENSE](LICENSE), [NOTICE](NOTICE)
+и [LICENSES/](LICENSES/).

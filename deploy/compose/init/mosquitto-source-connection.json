@@ -6,7 +6,7 @@
     "uri": "tcp://mosquitto:1883",
     "sources": [
         {
-            "addresses": ["telemetry/#"],
+            "addresses": ["telemetry/+"],
             "consumerCount": 1,
             "qos": 0,
             "authorizationContext": [

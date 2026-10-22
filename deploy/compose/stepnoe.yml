@@ -1,0 +1,70 @@
+# Always included by the repository Makefile. All paths relative to base file.
+services:
+  stepnoe-setup:
+    build: ../../team
+    image: openegiz/stepnoe:local
+    restart: "no"
+    command: ["python", "setup_twins.py"]
+    environment:
+      DITTO_URL: http://ditto-nginx:80
+      DITTO_PASSWORD: ${DITTO_PASSWORD}
+    depends_on:
+      init:
+        condition: service_completed_successfully
+
+  stepnoe:
+    image: openegiz/stepnoe:local
+    pull_policy: never
+    restart: unless-stopped
+    mem_limit: 128m
+    environment:
+      MQTT_HOST: mosquitto
+      MQTT_PORT: "1883"
+      SIM_SPEEDUP: ${SIM_SPEEDUP:-30}
+      FRAUD_MODE: ${FRAUD_MODE:-fixed}
+      DITTO_URL: http://ditto-nginx:80
+      DITTO_PASSWORD: ${DITTO_PASSWORD}
+    volumes:
+      - stepnoe-data:/data
+    depends_on:
+      stepnoe-setup:
+        condition: service_completed_successfully
+      mosquitto:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  grafana:
+    # Move Grafana behind a same-origin proxy on the existing external port.
+    # !override is supported starting with Compose 2.24.4.
+    ports: !override []
+    environment:
+      GF_PANELS_DISABLE_SANITIZE_HTML: "true"
+    volumes:
+      - ../../team/dashboards:/var/lib/grafana/stepnoe-dashboards:ro
+
+  stand:
+    image: docker.io/library/nginx:1.25-alpine
+    restart: unless-stopped
+    mem_limit: 64m
+    ports:
+      - "${OPENEGIZ_BIND:-127.0.0.1}:${GRAFANA_PORT:-3000}:80"
+    volumes:
+      - ../../team/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      grafana:
+        condition: service_healthy
+      stepnoe:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/api/health && wget -q -O /dev/null http://127.0.0.1/stepnoe/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  stepnoe-data:
