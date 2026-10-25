@@ -3,7 +3,8 @@ export const value = (data, thing, field, fallback = 0) => data?.twins?.[thing]?
 export const stateNames = {
   loading: 'Погрузка', hauling: 'К фабрике', unloading: 'Разгрузка', returning: 'Возврат',
   queued: 'Ожидание погрузки', outbound: 'В пути к потребителю', idle: 'Ожидание',
-  maintenance: 'Техническое обслуживание', MAINTENANCE: 'Техническое обслуживание'
+  maintenance: 'Техническое обслуживание', MAINTENANCE: 'Техническое обслуживание',
+  IDLE:'Простой: блокировка', blocked:'Остановлено: склад заполнен'
 };
 export const stateName = state => stateNames[state] || state || 'Нет данных';
 export const displayNames = {
@@ -22,14 +23,14 @@ export const virtualTime = seconds => {
   return `${Math.floor(seconds / 3600)} ч ${Math.floor(seconds % 3600 / 60)} мин`;
 };
 export const stockHeight = mass => Math.max(0, mass) / 2.7 * 3 / (Math.PI * 25 * 15);
-/** Schematic warehouse: one common scale preserves physical/book volume ratio.
- * Normalize to current inventory so long-running accelerated demos fit the shed.
- * Real tonnes, m³ and the 2.7 density remain unchanged in telemetry and audit.
+export const MAX_CAPACITY=6000;
+export const lidarMass=data=>Math.max(0,Number(value(data,'LiDAR_01','volume',data?.audit?.lidar_volume_reading??data?.audit?.scan_volume??0)))*2.7;
+/** Fixed surveyed display envelope: volume grows from zero to 6000 dry tonnes.
+ * The caller explicitly marks legacy inventories outside that display range.
  */
 export function stockDisplayScales(physical,book) {
-  const reference=Math.max(3000,physical);
   return [physical,book].map(mass=>{
-    const scale=Math.cbrt(Math.max(0,mass)/reference);
+    const scale=Math.cbrt(Math.max(0,mass)/MAX_CAPACITY);
     return [19*scale,8*scale,11*scale];
   });
 }

@@ -15,7 +15,7 @@ from pathlib import Path
 from urllib.parse import urlencode, urlsplit
 from urllib.request import Request, urlopen
 
-from model import FRAUD_TOPIC, MAINTENANCE_TOPIC, MAINTAINABLE, NS, Model
+from model import FRAUD_TOPIC, MAINTENANCE_TOPIC, MAINTAINABLE, SCENARIO_TOPIC, SCENARIOS, NS, Model
 
 LOG = logging.getLogger("stepnoe")
 WEB = Path(__file__).with_name("web")
@@ -28,6 +28,7 @@ class Store:
         self.db.execute("CREATE TABLE IF NOT EXISTS state (id INTEGER PRIMARY KEY CHECK(id=1), data TEXT NOT NULL)")
         self.db.execute("CREATE TABLE IF NOT EXISTS audit (id INTEGER PRIMARY KEY, timestamp REAL, virtual_time REAL, source TEXT, command INTEGER, physical REAL, book REAL, status TEXT)")
         self.db.execute("CREATE TABLE IF NOT EXISTS maintenance_audit (id INTEGER PRIMARY KEY, timestamp REAL, virtual_time REAL, source TEXT, thing TEXT, enabled INTEGER)")
+        self.db.execute("CREATE TABLE IF NOT EXISTS scenario_audit (id INTEGER PRIMARY KEY, timestamp REAL, virtual_time REAL, source TEXT, scenario TEXT, enabled INTEGER, measured REAL, book REAL, reason TEXT)")
         self.db.commit()
 
     def load(self, mode, **parameters):
@@ -41,7 +42,7 @@ class Store:
         model.lidar_noise_fraction = max(-bound, min(bound, model.lidar_noise_fraction))
         return model
 
-    def save(self, model, commands=(), maintenance_commands=()):
+    def save(self, model, commands=(), maintenance_commands=(), scenario_commands=()):
         a = model.audit()
         with self.db:
             self.db.execute("INSERT OR REPLACE INTO state VALUES(1, ?)", (json.dumps(model.dump()),))
@@ -51,6 +52,9 @@ class Store:
             for source, thing, enabled in maintenance_commands:
                 self.db.execute("INSERT INTO maintenance_audit(timestamp,virtual_time,source,thing,enabled) VALUES(?,?,?,?,?)",
                                 (time.time(), model.time, source, thing, enabled))
+            for source, scenario, enabled in scenario_commands:
+                self.db.execute('INSERT INTO scenario_audit(timestamp,virtual_time,source,scenario,enabled,measured,book,reason) VALUES(?,?,?,?,?,?,?,?)',
+                                (time.time(), model.time, source, scenario, enabled, a['measured_stock'], a['book_stock'], a['audit_reason']))
 
     def events(self):
         keys = ["id", "timestamp", "virtual_time", "source", "command", "physical", "book", "status"]
@@ -59,6 +63,10 @@ class Store:
     def maintenance_events(self):
         keys = ["id", "timestamp", "virtual_time", "source", "thing", "enabled"]
         return [dict(zip(keys, row)) for row in self.db.execute("SELECT * FROM maintenance_audit ORDER BY id DESC LIMIT 100")]
+
+    def scenario_events(self):
+        keys = ['id', 'timestamp', 'virtual_time', 'source', 'scenario', 'enabled', 'measured', 'book', 'reason']
+        return [dict(zip(keys, row)) for row in self.db.execute('SELECT * FROM scenario_audit ORDER BY id DESC LIMIT 100')]
 
 
 class Runtime:
@@ -98,6 +106,11 @@ class Runtime:
             if thing in MAINTAINABLE and payload in (b"0", b"1"):
                 self.controls.put_nowait((payload, source, thing))
                 return
+        if topic.startswith(SCENARIO_TOPIC):
+            scenario = topic.removeprefix(SCENARIO_TOPIC)
+            if scenario in SCENARIOS and payload in (b'0', b'1'):
+                self.controls.put_nowait((payload, source, scenario))
+                return
         raise ValueError("invalid MQTT control")
 
     def advance(self, seconds):
@@ -108,8 +121,12 @@ class Runtime:
                 except queue.Empty:
                     break
                 if target:
-                    self.model.set_maintenance(target[0], payload == b"1")
-                    self.store.save(self.model, maintenance_commands=[(source, target[0], int(payload))])
+                    if target[0] in SCENARIOS:
+                        self.model.set_scenario(target[0], payload == b'1')
+                        self.store.save(self.model, scenario_commands=[(source, target[0], int(payload))])
+                    else:
+                        self.model.set_maintenance(target[0], payload == b"1")
+                        self.store.save(self.model, maintenance_commands=[(source, target[0], int(payload))])
                 else:
                     self.model.control(payload)
                     # Store each transition separately, including 1 -> 0 in one tick.
@@ -221,7 +238,7 @@ def make_handler(runtime):
             self.wfile.write(raw)
 
         def do_OPTIONS(self):
-            if self.route_path() in ("/api/fraud", "/api/state", "/api/audit", "/api/maintenance"):
+            if self.route_path() in ("/api/fraud", "/api/state", "/api/audit", "/api/maintenance", '/api/scenarios'):
                 self.respond(204, None)
             else:
                 self.respond(404, {"error": "not found"})
@@ -247,6 +264,15 @@ def make_handler(runtime):
                 with runtime.lock:
                     events = runtime.store.maintenance_events()
                 self.respond(200, {"objects": {thing: bool(state["twins"][thing].get("maintenance", {}).get("properties", {}).get("value", 0)) for thing in MAINTAINABLE}, "events": events})
+            elif path == '/api/scenarios':
+                try:
+                    state = runtime.snapshot()
+                except RuntimeError:
+                    self.respond(503, {'error': 'waiting for platform telemetry in Ditto'})
+                    return
+                with runtime.lock:
+                    events = runtime.store.scenario_events()
+                self.respond(200, {'objects': {name: bool(state['audit'].get('scenario_' + name, 0)) for name in SCENARIOS}, 'events': events})
             else:
                 asset = (WEB / ("index.html" if path == "/" else path.lstrip("/"))).resolve()
                 content_types = {".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8", ".json": "application/json", ".txt": "text/plain; charset=utf-8"}
@@ -257,7 +283,7 @@ def make_handler(runtime):
 
         def do_POST(self):
             path = self.route_path()
-            if path not in ("/api/fraud", "/api/maintenance"):
+            if path not in ("/api/fraud", "/api/maintenance", '/api/scenarios'):
                 self.respond(404, {"error": "not found"})
                 return
             try:
@@ -267,15 +293,18 @@ def make_handler(runtime):
                 body = json.loads(self.rfile.read(length))
                 value = body.get("value")
                 maintenance = path == "/api/maintenance"
-                if type(value) is not int or value not in ((0, 1) if maintenance else (-1, 0, 1)):
+                scenario = body.get('scenario') if path == '/api/scenarios' else None
+                if path == '/api/scenarios' and scenario not in SCENARIOS:
+                    raise ValueError('unsupported scenario')
+                if type(value) is not int or value not in ((0, 1) if maintenance or scenario else (-1, 0, 1)):
                     raise ValueError("invalid command value")
                 thing = body.get("thing")
                 if maintenance and thing not in MAINTAINABLE:
                     raise ValueError("unsupported maintenance target")
-                topic = MAINTENANCE_TOPIC + thing if maintenance else FRAUD_TOPIC
+                topic = SCENARIO_TOPIC + scenario if scenario else MAINTENANCE_TOPIC + thing if maintenance else FRAUD_TOPIC
             except (ValueError, AttributeError):
                 error = 'use {"thing":"Processing_Plant|Truck_01|Truck_02","value":0|1}' if path == "/api/maintenance" else 'use {"value":-1}, {"value":0} or {"value":1}'
-                self.respond(400, {"error": error})
+                self.respond(400, {"error": 'use {"scenario":"plant_erp|sensor_bias|rain","value":0|1}' if path == '/api/scenarios' else error})
                 return
             if not runtime.healthy():
                 self.respond(503, {"error": "MQTT/model not ready"})
@@ -288,7 +317,7 @@ def make_handler(runtime):
             except (RuntimeError, TimeoutError):
                 self.respond(503, {"error": "MQTT command not acknowledged"})
                 return
-            self.respond(202, {"accepted": value, "topic": topic, **({"thing": thing} if maintenance else {})})
+            self.respond(202, {"accepted": value, "topic": topic, **({"thing": thing} if maintenance else {}), **({'scenario': scenario} if scenario else {})})
     return Handler
 
 
@@ -299,7 +328,11 @@ def main():
     speed = float(os.getenv("SIM_SPEEDUP", "30"))
     mode = os.getenv("FRAUD_MODE", "fixed")
     parameters = {name: float(os.environ[key]) for name, key in
-                  (("moisture_pct", "MOISTURE_PCT"), ("drift_rate_tph", "FRAUD_DRIFT_RATE_TPH"), ("lidar_noise_pct", "LIDAR_NOISE_PCT")) if key in os.environ}
+                  (("moisture_pct", "MOISTURE_PCT"), ("drift_rate_tph", "FRAUD_DRIFT_RATE_TPH"), ("lidar_noise_pct", "LIDAR_NOISE_PCT"),
+                   ('max_stock_capacity', 'MAX_STOCK_CAPACITY'), ('max_buffer_capacity', 'MAX_BUFFER_CAPACITY'),
+                   ('false_alarm_probability', 'SENSOR_FALSE_ALARM_PROBABILITY')) if os.getenv(key)}
+    if os.getenv('MAX_TRUCK_QUEUE'):
+        parameters['max_truck_queue'] = int(os.environ['MAX_TRUCK_QUEUE'])
     if not math.isfinite(tick) or not .1 <= tick <= 5 or not math.isfinite(speed) or not 0 < speed <= 3600 / tick or mode not in ("fixed", "percent", "drift"):
         raise ValueError("invalid TICK_SECONDS, SIM_SPEEDUP or FRAUD_MODE")
     store = Store(os.getenv("STATE_DB", "/data/stepnoe.db"))
@@ -314,7 +347,7 @@ def main():
         runtime.connected = not reason.is_failure
         runtime.subscribed = False
         if runtime.connected:
-            client.subscribe([(FRAUD_TOPIC, 1), (MAINTENANCE_TOPIC + "+", 1)])
+            client.subscribe([(FRAUD_TOPIC, 1), (MAINTENANCE_TOPIC + "+", 1), (SCENARIO_TOPIC + '+', 1)])
             LOG.info("MQTT connected; subscribing to control topic")
 
     def on_subscribe(_client, _userdata, _mid, reasons, _properties):

@@ -2097,6 +2097,32 @@ button:hover:not(:disabled) {
 }
 
 /* Navigation and metric hints form one unobstructed header layer. */
+.cascade-panel {padding:24px;margin:24px 0}
+.measurement-strip {display:flex;gap:16px;flex-wrap:wrap;padding:12px 18px;border-top:1px solid #ffffff14;color:#b7c9dc;font-size:13px;line-height:1.6}
+.measurement-strip strong {color:#e3f6ef;margin-left:5px}
+.measurement-strip .range-overflow {width:100%;color:#f0c897}
+.cascade-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.cascade-card {padding:22px;background:rgba(18,24,38,.75);border:1px solid #ffffff14;border-radius:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.cascade-card h3 {font-size:19px;font-weight:600;line-height:1.4}
+.cascade-card p,.diagnosis p {font-size:14px;line-height:1.65;color:#b9c6d7}
+.scenario-number {font-size:13px;color:#84cdbf;letter-spacing:.06em}
+.cascade-status {font-size:14px;color:#b6c8df}
+.cascade-status[data-active=true] {color:#eaa3a8}
+.rain-card {grid-column:1/-1;margin-top:18px}
+.cascade-card progress {width:100%;height:12px;accent-color:#69cbb6}
+.cascade-card label {font-size:13px;color:#b9c6d7;line-height:1.5}
+.cascade-actions {display:flex;gap:10px;margin-top:auto}
+.cascade-actions button {padding:10px 16px;border:1px solid #69cbb64d;border-radius:10px;color:#d4f5ea;background:#69cbb612;font-size:14px}
+.cascade-actions button:hover:not(:disabled) {border-color:#69cbb6;background:#69cbb625}
+.cascade-actions button:disabled {opacity:.45;cursor:default}
+.diagnosis {padding:18px 0 0;line-height:1.6}
+.diagnosis strong {font-size:17px;color:#d5eadf}
+.diagnosis small {font-size:13px;color:#aab9cf}
+.truth-option {display:flex;align-items:center;gap:8px;font-size:13px;color:#b0c5df;margin:8px 0}
+.blue-bg {background:#91b4e7}
+.chart-panel .panel-heading {gap:12px;flex-wrap:wrap}
+body[data-view=map] #scenario-section {display:none}
+@media(max-width:800px){.cascade-grid{grid-template-columns:1fr}.cascade-panel{padding:18px}.cascade-card{padding:18px}}
 .sidebar {z-index:160}
 .header,.top-bar,.topbar {
   position:relative;

@@ -2,7 +2,7 @@ import * as THREE from './vendor/three.module.js';
 import {OrbitControls} from './vendor/OrbitControls.js';
 import {createTruck, createExcavator, createPlant, createStockpile, createWagon, createTerrain,
   createLamp, createConveyor, createRail, createRoadMaterial, mesh, material, palette} from './models.js';
-import {value, number, stateName, displayNames, interpolationAlpha, stockDisplayScales, isFresh} from './telemetry.js';
+import {value, number, stateName, displayNames, interpolationAlpha, stockDisplayScales, isFresh, lidarMass, MAX_CAPACITY} from './telemetry.js';
 import {mineLayout, haulLayout, wagonPosition} from './layout.js';
 import {updateEquipmentTarget,advanceEquipment,synchronizeEquipment} from './motion.js';
 import {createHaulRoad} from './haul-road.js';
@@ -135,7 +135,7 @@ export class MineScene {
 
   update(data) {
     const previous=this.data;this.data=data;
-    this.productionRunning=!value(data,'Processing_Plant','maintenance')&&(value(data,'Processing_Plant','buffer')>.1 || value(data,'Processing_Plant','raw_inflow')>value(previous,'Processing_Plant','raw_inflow'));
+    this.productionRunning=!value(data,'Processing_Plant','maintenance')&&value(data,'Processing_Plant','raw_inflow_rate')>0;
     this.excavatorTargetPhase=value(data,'Excavator_01','passes')*Math.PI*2;
     if(this.excavatorPhase===undefined)this.excavatorPhase=this.excavatorTargetPhase;
     for(const [name,entry] of this.entities) {
@@ -147,7 +147,10 @@ export class MineScene {
       }
     }
     const stock=this.entities.get('Stockpile_01').object;
-    const [physical,book]=stockDisplayScales(data.audit.physical_stock,data.audit.book_stock);
+    this.measuredStockMass=lidarMass(data);
+    // A legacy checkpoint can predate storage limits. Mark overflow in the UI;
+    // never silently renormalize the 0..6000 t scale to the current inventory.
+    const [physical,book]=stockDisplayScales(Math.min(this.measuredStockMass,MAX_CAPACITY),Math.min(data.audit.book_stock,MAX_CAPACITY*1.12));
     this.physicalScale=new THREE.Vector3(...physical);
     this.bookScale=new THREE.Vector3(...book);
     if(!this.stockInitialized){stock.userData.physical.scale.copy(this.physicalScale);stock.userData.ghost.scale.copy(this.bookScale);stock.userData.ghost.material.opacity=0;this.stockInitialized=true;}
@@ -208,7 +211,7 @@ export class MineScene {
           ?`Статичная схема погрузки · Груз: ${number(value(this.data,name,'weight'))} т · Маршрут — на карте`
           :name.startsWith('Truck')?`Скорость: ${number(value(this.data,name,'speed'),0)} км/ч · Груз: ${number(value(this.data,name,'weight'))} т`
           :name==='Rail_Siding'?'Погрузочный узел · состав закреплен на схеме'
-          :name==='Stockpile_01'?`Физически: ${number(this.data.audit.physical_stock)} т · Объем: ${number(this.data.audit.scan_volume)} м³`
+          :name==='Stockpile_01'?`Измерено LiDAR: ${number(lidarMass(this.data))} т · Объем скана: ${number(value(this.data,'LiDAR_01','volume',this.data.audit.lidar_volume_reading))} м³`
           :name==='Processing_Plant'?`Концентрат: Fe 55% · Извлечение: 83.5%`
           :stateName(value(this.data,name,'state','idle'));
         this.tooltip.replaceChildren(title,body);
@@ -291,7 +294,7 @@ export class MineScene {
     if(this.stockInitialized) {
       const stock=this.entities.get('Stockpile_01').object.userData;
       stock.physical.scale.lerp(this.physicalScale,alpha);stock.ghost.scale.lerp(this.bookScale,alpha);
-      const target=this.data.audit.fraud_offset!==0?.58:0;
+      const target=Math.abs((this.data.audit.fraud_offset||0)+(this.data.audit.erp_offset||0)+(this.data.audit.moisture_erp_offset||0))>.01?.58:0;
       stock.ghost.material.opacity+=(target-stock.ghost.material.opacity)*alpha;
       stock.ghost.visible=stock.ghost.material.opacity>.01;
       stock.scanRing.material.opacity=.28+.1*Math.sin(this.elapsed);

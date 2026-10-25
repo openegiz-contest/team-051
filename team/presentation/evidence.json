@@ -1,0 +1,1163 @@
+{
+  "source": "Eclipse Ditto; isolated demonstration database",
+  "before": {
+    "virtual_time": 6150,
+    "audit": {
+      "physical_stock": 3286.4670318854633,
+      "ground_truth_mass": 3286.4670318854633,
+      "book_stock": 3286.4670318860512,
+      "scan_volume": 1216.146924576517,
+      "height": 3.0995998425666436,
+      "wet_stock": 3385.0610428420273,
+      "dry_stock": 3286.4670318854633,
+      "moisture_pct": 3,
+      "erp_moisture_pct": 3,
+      "reference_volume": 1217.2100118094309,
+      "wet_scale_reading": 3384.777066837108,
+      "scale_moisture_pct": 3,
+      "moisture_erp_offset": 0,
+      "lidar_noise_bound_pct": 0.5,
+      "lidar_noise_pct": -0.055473345881651426,
+      "fraud_active": 0,
+      "fraud_direction": 1,
+      "fraud_mode": "fixed",
+      "drift_rate_tph": 5,
+      "fraud_offset": 0,
+      "discrepancy_pct": 0,
+      "stock_residual": 5.879883246961981e-10,
+      "physical_residual": 5.475158104673028e-10,
+      "book_residual": 0,
+      "fe_residual": 3.019522409886122e-10,
+      "inventory": 3949.6336985521375,
+      "false_alarm_probability": 1e-06,
+      "stock_capacity": 6000,
+      "buffer_capacity": 360,
+      "buffer_fill_pct": 89.30555555555732,
+      "stock_fill_pct": 54.77445053142439,
+      "truck_queue_length": 0,
+      "excavator_interlock": 0,
+      "scenario_plant_erp": 0,
+      "scenario_sensor_bias": 0,
+      "scenario_rain": 0,
+      "erp_offset": 0,
+      "scale_bias_pct": 0,
+      "status": "BALANCE OK",
+      "measured_stock": 3286.1913270263185,
+      "weight_scale_reading": 3286.1913270263185,
+      "lidar_volume_reading": 1216.146924576517,
+      "lidar_dry_stock": 3283.596696356596,
+      "scale_timestamp": 6145,
+      "lidar_timestamp": 6131,
+      "audit_residual": 0,
+      "lidar_residual": -1.8225319727766873,
+      "lidar_uncertainty_t": 16.500485911339677,
+      "lidar_validated_residual": 0,
+      "sensor_disagreement": 1.8225648911175085,
+      "audit_reason": "CONSISTENT",
+      "recommendation": "Измерения и учет согласованы",
+      "anomaly": 0
+    },
+    "instruments": {
+      "Weighbridge_01": {
+        "weight_scale_reading": {
+          "properties": {
+            "value": 3286.1913270263185,
+            "unit": "t"
+          }
+        },
+        "wet_reading": {
+          "properties": {
+            "value": 3384.777066837108,
+            "unit": "t"
+          }
+        },
+        "moisture_at_sample": {
+          "properties": {
+            "value": 3,
+            "unit": "%"
+          }
+        },
+        "sample_timestamp": {
+          "properties": {
+            "value": 6145,
+            "unit": "s"
+          }
+        },
+        "delay": {
+          "properties": {
+            "value": 5,
+            "unit": "s"
+          }
+        },
+        "uncertainty": {
+          "properties": {
+            "value": 0.06,
+            "unit": "t"
+          }
+        },
+        "calibration_factor": {
+          "properties": {
+            "value": 1
+          }
+        },
+        "status": {
+          "properties": {
+            "value": "OK"
+          }
+        },
+        "simulation_time": {
+          "properties": {
+            "value": 6150,
+            "unit": "s"
+          }
+        },
+        "revision": {
+          "properties": {
+            "value": 212
+          }
+        }
+      },
+      "LiDAR_01": {
+        "volume": {
+          "properties": {
+            "value": 1216.146924576517,
+            "unit": "m3"
+          }
+        },
+        "dry_mass": {
+          "properties": {
+            "value": 3283.596696356596,
+            "unit": "t"
+          }
+        },
+        "sample_timestamp": {
+          "properties": {
+            "value": 6131,
+            "unit": "s"
+          }
+        },
+        "delay": {
+          "properties": {
+            "value": 10,
+            "unit": "s"
+          }
+        },
+        "scan_period": {
+          "properties": {
+            "value": 10,
+            "unit": "s"
+          }
+        },
+        "uncertainty_pct": {
+          "properties": {
+            "value": 0.5,
+            "unit": "%"
+          }
+        },
+        "density_calibration": {
+          "properties": {
+            "value": 2.7,
+            "unit": "t/m3"
+          }
+        },
+        "calibration_factor": {
+          "properties": {
+            "value": 1
+          }
+        },
+        "status": {
+          "properties": {
+            "value": "OK"
+          }
+        },
+        "simulation_time": {
+          "properties": {
+            "value": 6150,
+            "unit": "s"
+          }
+        },
+        "revision": {
+          "properties": {
+            "value": 212
+          }
+        }
+      },
+      "ERP_Register": {
+        "book_stock": {
+          "properties": {
+            "value": 3286.4670318860512,
+            "unit": "t"
+          }
+        },
+        "registered_moisture_pct": {
+          "properties": {
+            "value": 3,
+            "unit": "%"
+          }
+        },
+        "nominal_output_rate": {
+          "properties": {
+            "value": 0,
+            "unit": "t/h"
+          }
+        },
+        "sample_timestamp": {
+          "properties": {
+            "value": 6150,
+            "unit": "s"
+          }
+        },
+        "delay": {
+          "properties": {
+            "value": 0,
+            "unit": "s"
+          }
+        },
+        "calibration_factor": {
+          "properties": {
+            "value": 1
+          }
+        },
+        "status": {
+          "properties": {
+            "value": "OK"
+          }
+        },
+        "simulation_time": {
+          "properties": {
+            "value": 6150,
+            "unit": "s"
+          }
+        },
+        "revision": {
+          "properties": {
+            "value": 212
+          }
+        }
+      },
+      "Moisture_Sensor_01": {
+        "moisture_pct": {
+          "properties": {
+            "value": 3,
+            "unit": "%"
+          }
+        },
+        "sample_timestamp": {
+          "properties": {
+            "value": 6150,
+            "unit": "s"
+          }
+        },
+        "moisture_at_scale_sample": {
+          "properties": {
+            "value": 3,
+            "unit": "%"
+          }
+        },
+        "scale_sample_timestamp": {
+          "properties": {
+            "value": 6145,
+            "unit": "s"
+          }
+        },
+        "delay": {
+          "properties": {
+            "value": 0,
+            "unit": "s"
+          }
+        },
+        "calibration_factor": {
+          "properties": {
+            "value": 1
+          }
+        },
+        "status": {
+          "properties": {
+            "value": "OK"
+          }
+        },
+        "simulation_time": {
+          "properties": {
+            "value": 6150,
+            "unit": "s"
+          }
+        },
+        "revision": {
+          "properties": {
+            "value": 212
+          }
+        }
+      }
+    }
+  },
+  "during": {
+    "virtual_time": 6810,
+    "audit": {
+      "physical_stock": 3288.096978557425,
+      "ground_truth_mass": 3288.096978557425,
+      "book_stock": 3351.5569785580406,
+      "scan_volume": 1217.9167081108599,
+      "height": 3.1011371111285326,
+      "wet_stock": 3386.7398879141474,
+      "dry_stock": 3288.096978557425,
+      "moisture_pct": 3,
+      "erp_moisture_pct": 3,
+      "reference_volume": 1217.813695762009,
+      "wet_scale_reading": 3386.7333923010688,
+      "scale_moisture_pct": 3,
+      "moisture_erp_offset": 0,
+      "lidar_noise_bound_pct": 0.5,
+      "lidar_noise_pct": 0.008458793755528049,
+      "fraud_active": 0,
+      "fraud_direction": 1,
+      "fraud_mode": "fixed",
+      "drift_rate_tph": 5,
+      "fraud_offset": 0,
+      "discrepancy_pct": 0,
+      "stock_residual": 6.15273165749386e-10,
+      "physical_residual": 5.725269147660583e-10,
+      "book_residual": -63.46000000000049,
+      "fe_residual": 3.1513991416431963e-10,
+      "inventory": 3774.5969785574293,
+      "false_alarm_probability": 1e-06,
+      "stock_capacity": 6000,
+      "buffer_capacity": 360,
+      "buffer_fill_pct": 100,
+      "stock_fill_pct": 54.80161630929041,
+      "truck_queue_length": 2,
+      "excavator_interlock": 1,
+      "scenario_plant_erp": 1,
+      "scenario_sensor_bias": 0,
+      "scenario_rain": 0,
+      "erp_offset": 63.460000000000406,
+      "scale_bias_pct": 0,
+      "status": "CRITICAL ANOMALY: Mass Balance Mismatch",
+      "measured_stock": 3288.0906721369597,
+      "weight_scale_reading": 3288.0906721369597,
+      "lidar_volume_reading": 1217.9167081108599,
+      "lidar_dry_stock": 3288.375111899322,
+      "scale_timestamp": 6805,
+      "lidar_timestamp": 6791,
+      "audit_residual": 62.849639754414,
+      "lidar_residual": -61.06653332538508,
+      "lidar_uncertainty_t": 16.524498049745336,
+      "lidar_validated_residual": 44.54203527563975,
+      "sensor_disagreement": -1.8431064290289214,
+      "audit_reason": "ERP_DURING_DOWNTIME",
+      "recommendation": "Остановить ложное начисление ERP и сверить выпуск",
+      "anomaly": 1
+    },
+    "instruments": {
+      "Weighbridge_01": {
+        "weight_scale_reading": {
+          "properties": {
+            "value": 3288.0906721369597,
+            "unit": "t"
+          }
+        },
+        "wet_reading": {
+          "properties": {
+            "value": 3386.7333923010688,
+            "unit": "t"
+          }
+        },
+        "moisture_at_sample": {
+          "properties": {
+            "value": 3,
+            "unit": "%"
+          }
+        },
+        "sample_timestamp": {
+          "properties": {
+            "value": 6805,
+            "unit": "s"
+          }
+        },
+        "delay": {
+          "properties": {
+            "value": 5,
+            "unit": "s"
+          }
+        },
+        "uncertainty": {
+          "properties": {
+            "value": 0.06,
+            "unit": "t"
+          }
+        },
+        "calibration_factor": {
+          "properties": {
+            "value": 1
+          }
+        },
+        "status": {
+          "properties": {
+            "value": "OK"
+          }
+        },
+        "simulation_time": {
+          "properties": {
+            "value": 6810,
+            "unit": "s"
+          }
+        },
+        "revision": {
+          "properties": {
+            "value": 235
+          }
+        }
+      },
+      "LiDAR_01": {
+        "volume": {
+          "properties": {
+            "value": 1217.9167081108599,
+            "unit": "m3"
+          }
+        },
+        "dry_mass": {
+          "properties": {
+            "value": 3288.375111899322,
+            "unit": "t"
+          }
+        },
+        "sample_timestamp": {
+          "properties": {
+            "value": 6791,
+            "unit": "s"
+          }
+        },
+        "delay": {
+          "properties": {
+            "value": 10,
+            "unit": "s"
+          }
+        },
+        "scan_period": {
+          "properties": {
+            "value": 10,
+            "unit": "s"
+          }
+        },
+        "uncertainty_pct": {
+          "properties": {
+            "value": 0.5,
+            "unit": "%"
+          }
+        },
+        "density_calibration": {
+          "properties": {
+            "value": 2.7,
+            "unit": "t/m3"
+          }
+        },
+        "calibration_factor": {
+          "properties": {
+            "value": 1
+          }
+        },
+        "status": {
+          "properties": {
+            "value": "OK"
+          }
+        },
+        "simulation_time": {
+          "properties": {
+            "value": 6810,
+            "unit": "s"
+          }
+        },
+        "revision": {
+          "properties": {
+            "value": 235
+          }
+        }
+      },
+      "ERP_Register": {
+        "book_stock": {
+          "properties": {
+            "value": 3351.5569785580406,
+            "unit": "t"
+          }
+        },
+        "registered_moisture_pct": {
+          "properties": {
+            "value": 3,
+            "unit": "%"
+          }
+        },
+        "nominal_output_rate": {
+          "properties": {
+            "value": 400.8,
+            "unit": "t/h"
+          }
+        },
+        "sample_timestamp": {
+          "properties": {
+            "value": 6810,
+            "unit": "s"
+          }
+        },
+        "delay": {
+          "properties": {
+            "value": 0,
+            "unit": "s"
+          }
+        },
+        "calibration_factor": {
+          "properties": {
+            "value": 1
+          }
+        },
+        "status": {
+          "properties": {
+            "value": "UNCONFIRMED_OUTPUT"
+          }
+        },
+        "simulation_time": {
+          "properties": {
+            "value": 6810,
+            "unit": "s"
+          }
+        },
+        "revision": {
+          "properties": {
+            "value": 235
+          }
+        }
+      },
+      "Moisture_Sensor_01": {
+        "moisture_pct": {
+          "properties": {
+            "value": 3,
+            "unit": "%"
+          }
+        },
+        "sample_timestamp": {
+          "properties": {
+            "value": 6810,
+            "unit": "s"
+          }
+        },
+        "moisture_at_scale_sample": {
+          "properties": {
+            "value": 3,
+            "unit": "%"
+          }
+        },
+        "scale_sample_timestamp": {
+          "properties": {
+            "value": 6805,
+            "unit": "s"
+          }
+        },
+        "delay": {
+          "properties": {
+            "value": 0,
+            "unit": "s"
+          }
+        },
+        "calibration_factor": {
+          "properties": {
+            "value": 1
+          }
+        },
+        "status": {
+          "properties": {
+            "value": "OK"
+          }
+        },
+        "simulation_time": {
+          "properties": {
+            "value": 6810,
+            "unit": "s"
+          }
+        },
+        "revision": {
+          "properties": {
+            "value": 235
+          }
+        }
+      }
+    }
+  },
+  "after": {
+    "virtual_time": 7410,
+    "audit": {
+      "physical_stock": 3318.0207653835514,
+      "ground_truth_mass": 3318.0207653835514,
+      "book_stock": 3318.0207653841653,
+      "scan_volume": 1227.5276061724528,
+      "height": 3.1293594435101992,
+      "wet_stock": 3417.561388345058,
+      "dry_stock": 3318.0207653835514,
+      "moisture_pct": 3,
+      "erp_moisture_pct": 3,
+      "reference_volume": 1228.8965797716858,
+      "wet_scale_reading": 3417.028587203991,
+      "scale_moisture_pct": 3,
+      "moisture_erp_offset": 0,
+      "lidar_noise_bound_pct": 0.5,
+      "lidar_noise_pct": -0.04794857443283229,
+      "fraud_active": 0,
+      "fraud_direction": 1,
+      "fraud_mode": "fixed",
+      "drift_rate_tph": 5,
+      "fraud_offset": 0,
+      "discrepancy_pct": 0,
+      "stock_residual": 6.139089236967266e-10,
+      "physical_residual": 5.77074388274923e-10,
+      "book_residual": 0,
+      "fe_residual": 3.1241143005900085e-10,
+      "inventory": 3759.520765383551,
+      "false_alarm_probability": 1e-06,
+      "stock_capacity": 6000,
+      "buffer_capacity": 360,
+      "buffer_fill_pct": 99.9537037037037,
+      "stock_fill_pct": 55.30034608972586,
+      "truck_queue_length": 1,
+      "excavator_interlock": 0,
+      "scenario_plant_erp": 0,
+      "scenario_sensor_bias": 0,
+      "scenario_rain": 0,
+      "erp_offset": 0,
+      "scale_bias_pct": 0,
+      "status": "BALANCE OK",
+      "measured_stock": 3317.503482722321,
+      "weight_scale_reading": 3317.503482722321,
+      "lidar_volume_reading": 1227.5276061724528,
+      "lidar_dry_stock": 3314.324536665623,
+      "scale_timestamp": 7405,
+      "lidar_timestamp": 7391,
+      "audit_residual": 0,
+      "lidar_residual": -1.5899337185751392,
+      "lidar_uncertainty_t": 16.654897169173985,
+      "lidar_validated_residual": 0,
+      "sensor_disagreement": 1.6269469191674943,
+      "audit_reason": "CONSISTENT",
+      "recommendation": "Измерения и учет согласованы",
+      "anomaly": 0
+    },
+    "instruments": {
+      "Weighbridge_01": {
+        "weight_scale_reading": {
+          "properties": {
+            "value": 3317.503482722321,
+            "unit": "t"
+          }
+        },
+        "wet_reading": {
+          "properties": {
+            "value": 3417.028587203991,
+            "unit": "t"
+          }
+        },
+        "moisture_at_sample": {
+          "properties": {
+            "value": 3,
+            "unit": "%"
+          }
+        },
+        "sample_timestamp": {
+          "properties": {
+            "value": 7405,
+            "unit": "s"
+          }
+        },
+        "delay": {
+          "properties": {
+            "value": 5,
+            "unit": "s"
+          }
+        },
+        "uncertainty": {
+          "properties": {
+            "value": 0.06,
+            "unit": "t"
+          }
+        },
+        "calibration_factor": {
+          "properties": {
+            "value": 1
+          }
+        },
+        "status": {
+          "properties": {
+            "value": "OK"
+          }
+        },
+        "simulation_time": {
+          "properties": {
+            "value": 7410,
+            "unit": "s"
+          }
+        },
+        "revision": {
+          "properties": {
+            "value": 256
+          }
+        }
+      },
+      "LiDAR_01": {
+        "volume": {
+          "properties": {
+            "value": 1227.5276061724528,
+            "unit": "m3"
+          }
+        },
+        "dry_mass": {
+          "properties": {
+            "value": 3314.324536665623,
+            "unit": "t"
+          }
+        },
+        "sample_timestamp": {
+          "properties": {
+            "value": 7391,
+            "unit": "s"
+          }
+        },
+        "delay": {
+          "properties": {
+            "value": 10,
+            "unit": "s"
+          }
+        },
+        "scan_period": {
+          "properties": {
+            "value": 10,
+            "unit": "s"
+          }
+        },
+        "uncertainty_pct": {
+          "properties": {
+            "value": 0.5,
+            "unit": "%"
+          }
+        },
+        "density_calibration": {
+          "properties": {
+            "value": 2.7,
+            "unit": "t/m3"
+          }
+        },
+        "calibration_factor": {
+          "properties": {
+            "value": 1
+          }
+        },
+        "status": {
+          "properties": {
+            "value": "OK"
+          }
+        },
+        "simulation_time": {
+          "properties": {
+            "value": 7410,
+            "unit": "s"
+          }
+        },
+        "revision": {
+          "properties": {
+            "value": 256
+          }
+        }
+      },
+      "ERP_Register": {
+        "book_stock": {
+          "properties": {
+            "value": 3318.0207653841653,
+            "unit": "t"
+          }
+        },
+        "registered_moisture_pct": {
+          "properties": {
+            "value": 3,
+            "unit": "%"
+          }
+        },
+        "nominal_output_rate": {
+          "properties": {
+            "value": 0,
+            "unit": "t/h"
+          }
+        },
+        "sample_timestamp": {
+          "properties": {
+            "value": 7410,
+            "unit": "s"
+          }
+        },
+        "delay": {
+          "properties": {
+            "value": 0,
+            "unit": "s"
+          }
+        },
+        "calibration_factor": {
+          "properties": {
+            "value": 1
+          }
+        },
+        "status": {
+          "properties": {
+            "value": "OK"
+          }
+        },
+        "simulation_time": {
+          "properties": {
+            "value": 7410,
+            "unit": "s"
+          }
+        },
+        "revision": {
+          "properties": {
+            "value": 256
+          }
+        }
+      },
+      "Moisture_Sensor_01": {
+        "moisture_pct": {
+          "properties": {
+            "value": 3,
+            "unit": "%"
+          }
+        },
+        "sample_timestamp": {
+          "properties": {
+            "value": 7410,
+            "unit": "s"
+          }
+        },
+        "moisture_at_scale_sample": {
+          "properties": {
+            "value": 3,
+            "unit": "%"
+          }
+        },
+        "scale_sample_timestamp": {
+          "properties": {
+            "value": 7405,
+            "unit": "s"
+          }
+        },
+        "delay": {
+          "properties": {
+            "value": 0,
+            "unit": "s"
+          }
+        },
+        "calibration_factor": {
+          "properties": {
+            "value": 1
+          }
+        },
+        "status": {
+          "properties": {
+            "value": "OK"
+          }
+        },
+        "simulation_time": {
+          "properties": {
+            "value": 7410,
+            "unit": "s"
+          }
+        },
+        "revision": {
+          "properties": {
+            "value": 256
+          }
+        }
+      }
+    }
+  },
+  "rain": {
+    "virtual_time": 7530,
+    "audit": {
+      "physical_stock": 3331.3254821531864,
+      "ground_truth_mass": 3331.3254821531864,
+      "book_stock": 3460.6745682781393,
+      "scan_volume": 1234.5894269847392,
+      "height": 3.141907659452866,
+      "wet_stock": 3564.5182659039097,
+      "dry_stock": 3331.3254821531864,
+      "moisture_pct": 7,
+      "erp_moisture_pct": 3,
+      "reference_volume": 1233.8242526493282,
+      "wet_scale_reading": 3563.890695440801,
+      "scale_moisture_pct": 7,
+      "moisture_erp_offset": 129.3490861243372,
+      "lidar_noise_bound_pct": 0.5,
+      "lidar_noise_pct": 0.1253373427718918,
+      "fraud_active": 0,
+      "fraud_direction": 1,
+      "fraud_mode": "fixed",
+      "drift_rate_tph": 5,
+      "fraud_offset": 0,
+      "discrepancy_pct": 0,
+      "stock_residual": 6.157279131002724e-10,
+      "physical_residual": 5.802576197311282e-10,
+      "book_residual": -129.3490861243372,
+      "fe_residual": 3.121840563835576e-10,
+      "inventory": 3752.8254821531837,
+      "false_alarm_probability": 1e-06,
+      "stock_capacity": 6000,
+      "buffer_capacity": 360,
+      "buffer_fill_pct": 99.9537037037037,
+      "stock_fill_pct": 55.52209136921977,
+      "truck_queue_length": 1,
+      "excavator_interlock": 0,
+      "scenario_plant_erp": 0,
+      "scenario_sensor_bias": 0,
+      "scenario_rain": 1,
+      "erp_offset": 0,
+      "scale_bias_pct": 0,
+      "status": "CRITICAL ANOMALY: Mass Balance Mismatch",
+      "measured_stock": 3330.738967701683,
+      "weight_scale_reading": 3330.738967701683,
+      "lidar_volume_reading": 1234.5894269847392,
+      "lidar_dry_stock": 3333.391452858796,
+      "scale_timestamp": 7525,
+      "lidar_timestamp": 7511,
+      "audit_residual": 129.32117656565055,
+      "lidar_residual": -125.176331873055,
+      "lidar_uncertainty_t": 16.75071081838591,
+      "lidar_validated_residual": 108.4256210546691,
+      "sensor_disagreement": -4.204844692595543,
+      "audit_reason": "MOISTURE_ERP_MISMATCH",
+      "recommendation": "Требуется пересчет влажности / ошибка ERP",
+      "anomaly": 1
+    },
+    "instruments": {
+      "Weighbridge_01": {
+        "weight_scale_reading": {
+          "properties": {
+            "value": 3330.738967701683,
+            "unit": "t"
+          }
+        },
+        "wet_reading": {
+          "properties": {
+            "value": 3563.890695440801,
+            "unit": "t"
+          }
+        },
+        "moisture_at_sample": {
+          "properties": {
+            "value": 7,
+            "unit": "%"
+          }
+        },
+        "sample_timestamp": {
+          "properties": {
+            "value": 7525,
+            "unit": "s"
+          }
+        },
+        "delay": {
+          "properties": {
+            "value": 5,
+            "unit": "s"
+          }
+        },
+        "uncertainty": {
+          "properties": {
+            "value": 0.06,
+            "unit": "t"
+          }
+        },
+        "calibration_factor": {
+          "properties": {
+            "value": 1
+          }
+        },
+        "status": {
+          "properties": {
+            "value": "OK"
+          }
+        },
+        "simulation_time": {
+          "properties": {
+            "value": 7530,
+            "unit": "s"
+          }
+        },
+        "revision": {
+          "properties": {
+            "value": 261
+          }
+        }
+      },
+      "LiDAR_01": {
+        "volume": {
+          "properties": {
+            "value": 1234.5894269847392,
+            "unit": "m3"
+          }
+        },
+        "dry_mass": {
+          "properties": {
+            "value": 3333.391452858796,
+            "unit": "t"
+          }
+        },
+        "sample_timestamp": {
+          "properties": {
+            "value": 7511,
+            "unit": "s"
+          }
+        },
+        "delay": {
+          "properties": {
+            "value": 10,
+            "unit": "s"
+          }
+        },
+        "scan_period": {
+          "properties": {
+            "value": 10,
+            "unit": "s"
+          }
+        },
+        "uncertainty_pct": {
+          "properties": {
+            "value": 0.5,
+            "unit": "%"
+          }
+        },
+        "density_calibration": {
+          "properties": {
+            "value": 2.7,
+            "unit": "t/m3"
+          }
+        },
+        "calibration_factor": {
+          "properties": {
+            "value": 1
+          }
+        },
+        "status": {
+          "properties": {
+            "value": "OK"
+          }
+        },
+        "simulation_time": {
+          "properties": {
+            "value": 7530,
+            "unit": "s"
+          }
+        },
+        "revision": {
+          "properties": {
+            "value": 261
+          }
+        }
+      },
+      "ERP_Register": {
+        "book_stock": {
+          "properties": {
+            "value": 3460.6745682781393,
+            "unit": "t"
+          }
+        },
+        "registered_moisture_pct": {
+          "properties": {
+            "value": 3,
+            "unit": "%"
+          }
+        },
+        "nominal_output_rate": {
+          "properties": {
+            "value": 0,
+            "unit": "t/h"
+          }
+        },
+        "sample_timestamp": {
+          "properties": {
+            "value": 7530,
+            "unit": "s"
+          }
+        },
+        "delay": {
+          "properties": {
+            "value": 0,
+            "unit": "s"
+          }
+        },
+        "calibration_factor": {
+          "properties": {
+            "value": 1
+          }
+        },
+        "status": {
+          "properties": {
+            "value": "STALE_MOISTURE"
+          }
+        },
+        "simulation_time": {
+          "properties": {
+            "value": 7530,
+            "unit": "s"
+          }
+        },
+        "revision": {
+          "properties": {
+            "value": 261
+          }
+        }
+      },
+      "Moisture_Sensor_01": {
+        "moisture_pct": {
+          "properties": {
+            "value": 7,
+            "unit": "%"
+          }
+        },
+        "sample_timestamp": {
+          "properties": {
+            "value": 7530,
+            "unit": "s"
+          }
+        },
+        "moisture_at_scale_sample": {
+          "properties": {
+            "value": 7,
+            "unit": "%"
+          }
+        },
+        "scale_sample_timestamp": {
+          "properties": {
+            "value": 7525,
+            "unit": "s"
+          }
+        },
+        "delay": {
+          "properties": {
+            "value": 0,
+            "unit": "s"
+          }
+        },
+        "calibration_factor": {
+          "properties": {
+            "value": 1
+          }
+        },
+        "status": {
+          "properties": {
+            "value": "OK"
+          }
+        },
+        "simulation_time": {
+          "properties": {
+            "value": 7530,
+            "unit": "s"
+          }
+        },
+        "revision": {
+          "properties": {
+            "value": 261
+          }
+        }
+      }
+    }
+  }
+}

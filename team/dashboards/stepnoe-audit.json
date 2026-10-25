@@ -17,23 +17,23 @@
   },
   "panels": [
     {
-      "title": "Anti-Fraud Controls — Simulate Paper Fraud",
+      "title": "Сценарии и аудит · Simulate Paper Fraud",
       "type": "text",
       "transparent": true,
       "gridPos": {
         "x": 0,
         "y": 0,
         "w": 24,
-        "h": 30
+        "h": 46
       },
       "options": {
         "mode": "html",
-        "content": "<iframe title=\"Anti-Fraud Controls — Simulate Paper Fraud\" src=\"/stepnoe/index.html?view=audit&amp;v=5ae010193479\" style=\"display:block;width:100%;height:100%;border:0;border-radius:16px;background:#101722\" allow=\"fullscreen\" loading=\"lazy\"></iframe>"
+        "content": "<iframe title=\"Сценарии и аудит · Simulate Paper Fraud\" src=\"/stepnoe/index.html?view=audit&amp;v=40fbd42b43ba\" style=\"display:block;width:100%;height:100%;border:0;border-radius:16px;background:#101722\" allow=\"fullscreen\" loading=\"lazy\"></iframe>"
       },
       "id": 1
     },
     {
-      "title": "3D-скан и учетный остаток",
+      "title": "LiDAR, учет ERP и отладочный эталон",
       "type": "timeseries",
       "datasource": {
         "type": "influxdb",
@@ -43,7 +43,7 @@
       "description": "Телеметрия Eclipse Ditto через InfluxDB. Все массы приведены к сухому веществу; начальный запас 3000 т учитывается отдельно.",
       "gridPos": {
         "x": 0,
-        "y": 30,
+        "y": 46,
         "w": 12,
         "h": 9
       },
@@ -82,7 +82,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Физический склад"
+                "value": "Измерено LiDAR"
               },
               {
                 "id": "color",
@@ -111,6 +111,33 @@
                 }
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "C"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Эталон симуляции (отладка)"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#dfbc83"
+                }
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "viz": true,
+                  "legend": false,
+                  "tooltip": false
+                }
+              }
+            ]
           }
         ]
       },
@@ -121,7 +148,7 @@
             "type": "influxdb",
             "uid": "opentwins-influxdb"
           },
-          "query": "from(bucket: \"default\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"mqtt_consumer\" and r.thingId == \"org.stepnoe:Mass_Balance\" and r._field == \"value_physical_stock_properties_value\")\n  |> group(columns: [\"thingId\", \"_field\"])\n  |> keep(columns: [\"_time\", \"_value\"])\n  |> yield(name: \"physical_stock\")"
+          "query": "from(bucket: \"default\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"mqtt_consumer\" and r.thingId == \"org.stepnoe:Mass_Balance\" and r._field == \"value_lidar_dry_stock_properties_value\")\n  |> group(columns: [\"thingId\", \"_field\"])\n  |> keep(columns: [\"_time\", \"_value\"])\n  |> yield(name: \"lidar_dry_stock\")"
         },
         {
           "refId": "B",
@@ -130,6 +157,14 @@
             "uid": "opentwins-influxdb"
           },
           "query": "from(bucket: \"default\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"mqtt_consumer\" and r.thingId == \"org.stepnoe:Mass_Balance\" and r._field == \"value_book_stock_properties_value\")\n  |> group(columns: [\"thingId\", \"_field\"])\n  |> keep(columns: [\"_time\", \"_value\"])\n  |> yield(name: \"book_stock\")"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "opentwins-influxdb"
+          },
+          "query": "from(bucket: \"default\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"mqtt_consumer\" and r.thingId == \"org.stepnoe:Mass_Balance\" and r._field == \"value_ground_truth_mass_properties_value\")\n  |> group(columns: [\"thingId\", \"_field\"])\n  |> keep(columns: [\"_time\", \"_value\"])\n  |> yield(name: \"ground_truth_mass\")"
         }
       ],
       "options": {
@@ -144,7 +179,7 @@
       "id": 2
     },
     {
-      "title": "Независимые балансы массы и железа",
+      "title": "Сверка измерений и документов",
       "type": "timeseries",
       "datasource": {
         "type": "influxdb",
@@ -154,7 +189,7 @@
       "description": "Телеметрия Eclipse Ditto через InfluxDB. Все массы приведены к сухому веществу; начальный запас 3000 т учитывается отдельно.",
       "gridPos": {
         "x": 12,
-        "y": 30,
+        "y": 46,
         "w": 12,
         "h": 9
       },
@@ -181,9 +216,7 @@
               "tooltip": false,
               "viz": false,
               "legend": false
-            },
-            "axisSoftMin": -1,
-            "axisSoftMax": 1
+            }
           }
         },
         "overrides": [
@@ -195,7 +228,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Баланс массы"
+                "value": "Сверка ERP / весы"
               },
               {
                 "id": "color",
@@ -214,26 +247,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Баланс учета"
-              },
-              {
-                "id": "color",
-                "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#ed9aa5"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byFrameRefID",
-              "options": "C"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Баланс Fe"
+                "value": "Разность измерительных каналов"
               },
               {
                 "id": "color",
@@ -253,7 +267,7 @@
             "type": "influxdb",
             "uid": "opentwins-influxdb"
           },
-          "query": "from(bucket: \"default\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"mqtt_consumer\" and r.thingId == \"org.stepnoe:Mass_Balance\" and r._field == \"value_physical_residual_properties_value\")\n  |> group(columns: [\"thingId\", \"_field\"])\n  |> keep(columns: [\"_time\", \"_value\"])\n  |> yield(name: \"physical_residual\")"
+          "query": "from(bucket: \"default\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"mqtt_consumer\" and r.thingId == \"org.stepnoe:Mass_Balance\" and r._field == \"value_audit_residual_properties_value\")\n  |> group(columns: [\"thingId\", \"_field\"])\n  |> keep(columns: [\"_time\", \"_value\"])\n  |> yield(name: \"audit_residual\")"
         },
         {
           "refId": "B",
@@ -261,15 +275,7 @@
             "type": "influxdb",
             "uid": "opentwins-influxdb"
           },
-          "query": "from(bucket: \"default\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"mqtt_consumer\" and r.thingId == \"org.stepnoe:Mass_Balance\" and r._field == \"value_book_residual_properties_value\")\n  |> group(columns: [\"thingId\", \"_field\"])\n  |> keep(columns: [\"_time\", \"_value\"])\n  |> yield(name: \"book_residual\")"
-        },
-        {
-          "refId": "C",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "opentwins-influxdb"
-          },
-          "query": "from(bucket: \"default\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"mqtt_consumer\" and r.thingId == \"org.stepnoe:Mass_Balance\" and r._field == \"value_fe_residual_properties_value\")\n  |> group(columns: [\"thingId\", \"_field\"])\n  |> keep(columns: [\"_time\", \"_value\"])\n  |> yield(name: \"fe_residual\")"
+          "query": "from(bucket: \"default\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"mqtt_consumer\" and r.thingId == \"org.stepnoe:Mass_Balance\" and r._field == \"value_sensor_disagreement_properties_value\")\n  |> group(columns: [\"thingId\", \"_field\"])\n  |> keep(columns: [\"_time\", \"_value\"])\n  |> yield(name: \"sensor_disagreement\")"
         }
       ],
       "options": {
@@ -294,7 +300,7 @@
       "description": "Телеметрия Eclipse Ditto через InfluxDB. Все массы приведены к сухому веществу; начальный запас 3000 т учитывается отдельно.",
       "gridPos": {
         "x": 0,
-        "y": 39,
+        "y": 55,
         "w": 12,
         "h": 8
       },
@@ -432,7 +438,7 @@
       "description": "Телеметрия Eclipse Ditto через InfluxDB. Все массы приведены к сухому веществу; начальный запас 3000 т учитывается отдельно.",
       "gridPos": {
         "x": 12,
-        "y": 39,
+        "y": 55,
         "w": 12,
         "h": 8
       },

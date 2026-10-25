@@ -6,6 +6,32 @@ const test=require('node:test');
 const moduleURL=name=>pathToFileURL(path.resolve(__dirname,'../web',name)).href;
 const modules=Promise.all([import(moduleURL('api.js')),import(moduleURL('controls.js')),import(moduleURL('telemetry.js'))]);
 
+test('cascade controls retain CORS POST and wait for the named Ditto scenario',async t=>{
+  const {setScenario}=await import(moduleURL('api.js'));
+  const {ScenarioControl}=await import(moduleURL('controls.js'));
+  const original=global.fetch,calls=[];
+  global.fetch=async(url,options)=>{calls.push({url,options});return Response.json({accepted:1},{status:202});};
+  t.after(()=>{global.fetch=original;});
+  const element=()=>({disabled:false,textContent:'',dataset:{},addEventListener(){}});
+  const start=element(),reset=element(),status=element(),message=element();
+  const control=new ScenarioControl({name:'plant_erp',start,reset,status,message,send:setScenario});
+  control.render({mqtt_connected:true,telemetry_age:0,audit:{scenario_plant_erp:0}});
+  await control.command(1);
+  assert.equal(calls[0].url,'/stepnoe/api/scenarios');
+  assert.equal(calls[0].options.method,'POST');assert.equal(calls[0].options.credentials,'same-origin');
+  assert.equal(calls[0].options.mode,'cors');assert.equal(calls[0].options.headers['Content-Type'],'application/json');
+  assert.deepEqual(JSON.parse(calls[0].options.body),{scenario:'plant_erp',value:1});
+  assert.equal(control.pending,true);
+  control.render({mqtt_connected:true,telemetry_age:0,audit:{scenario_plant_erp:1}});
+  assert.equal(control.pending,false);assert.equal(reset.disabled,false);assert.equal(start.disabled,true);
+});
+
+test('chart series distinguish measured LiDAR, ERP and optional simulation truth',async()=>{
+  const {historySeries}=await import(moduleURL('charts.js'));
+  assert.deepEqual(historySeries().map(s=>s.key),['lidar_dry_stock','book_stock']);
+  assert.deepEqual(historySeries(true).map(s=>s.key),['lidar_dry_stock','book_stock','ground_truth_mass']);
+});
+
 async function controlFor(t,response) {
   const [{apiJSON},{FraudControl}]=await modules;
   const calls=[],original=global.fetch;
@@ -384,7 +410,7 @@ test('missed unloading telemetry still produces one smooth stop at the receiver'
 });
 test('warehouse normalization preserves volume ratios and never changes physical scale for fraud',async()=>{
   const [,,{stockDisplayScales}]=await modules;
-  for(const physical of [0,300,3000,1000000]){
+  for(const physical of [0,300,3000,6000]){
     const [base]=stockDisplayScales(physical,physical);
     for(const offset of [-300,300]){
       const book=Math.max(0,physical+offset),[p,b]=stockDisplayScales(physical,book);
@@ -394,6 +420,15 @@ test('warehouse normalization preserves volume ratios and never changes physical
       if(physical>0)assert.ok(Math.abs((b[0]*b[1]*b[2])/(p[0]*p[1]*p[2])-book/physical)<1e-9);
     }
   }
+});
+
+test('fixed warehouse scale grows beyond 3000 t and uses LiDAR rather than hidden truth',async()=>{
+  const {stockDisplayScales,lidarMass,MAX_CAPACITY}=await import(moduleURL('telemetry.js'));
+  assert.equal(MAX_CAPACITY,6000);
+  const [half]=stockDisplayScales(3000,3000),[full]=stockDisplayScales(6000,6000);
+  assert.ok(full[1]>half[1]);assert.ok(Math.abs(full[1]**3/half[1]**3-2)<1e-12);
+  assert.equal(lidarMass({audit:{physical_stock:99999,lidar_volume_reading:1000}}),2700);
+  assert.equal(lidarMass({twins:{LiDAR_01:{volume:{properties:{value:1100}}}},audit:{physical_stock:99999,lidar_volume_reading:1000}}),2970);
 });
 test('enlarged mill, receiving grizzly, translucent hangar and three aimed LiDAR heads are present',async()=>{
   const THREE=await import(moduleURL('vendor/three.module.js'));

@@ -41,12 +41,20 @@ def main():
     ditto_password, grafana_password, token = [os.environ[k] for k in ("DITTO_PASSWORD", "GRAFANA_ADMIN_PASSWORD", "INFLUXDB_TOKEN")]
     state = lambda: http("http://127.0.0.1:8085/api/state")
     thing = lambda name: http(f"http://ditto-nginx/api/2/things/{NS}:{name}", "ditto", ditto_password)
+    def conserved(a):
+        # Legacy checkpoints can contain months of accumulated floating-point
+        # sums. Relative 1e-10 is 15 g at 150000 t; the audit threshold is 1 t.
+        tolerance = max(1e-6, abs(a['inventory']) * 1e-10)
+        assert all(abs(a[key]) < tolerance for key in ('physical_residual', 'fe_residual')), (a, tolerance)
     wait_for("service + MQTT ready", lambda: http("http://127.0.0.1:8085/health")["ready"])
     wait_for("UI reads real Ditto twins", lambda: state()["source"] == "Eclipse Ditto")
     for thing_id, body in json.loads(Path("twins.json").read_text()).items():
         actual = thing(thing_id.split(":")[1])
         assert actual["attributes"].get("_parents") == body["attributes"].get("_parents")
-    print("PASS 14 Ditto twins and hierarchy", flush=True)
+    print("PASS 18 Ditto twins, independent instruments and hierarchy", flush=True)
+    connection = http('http://ditto-nginx/api/2/connections/mosquitto-source-connection', 'devops', os.environ['DITTO_DEVOPS_PASSWORD'])
+    assert connection['sources'][0]['qos'] == 1
+    print('PASS actual Ditto MQTT source QoS 1', flush=True)
     for uid in ("stepnoe-overview", "stepnoe-audit", "stepnoe-logistics"):
         http(f"http://grafana:3000/api/dashboards/uid/{uid}", "admin", grafana_password)
     print("PASS three provisioned Grafana dashboards", flush=True)
@@ -76,16 +84,60 @@ def main():
         set_fraud(1)
         a = state()["audit"]
         assert a["status"] == CRITICAL and a["fraud_offset"] > 0
-        assert abs(a["physical_residual"]) < 1e-6 and abs(a["fe_residual"]) < 1e-6
+        conserved(a)
         set_fraud(-1)
         a = state()["audit"]
         assert a["status"] == CRITICAL and a["fraud_offset"] < 0
-        assert abs(a["physical_residual"]) < 1e-6 and abs(a["fe_residual"]) < 1e-6
+        conserved(a)
         set_fraud(0)
         assert state()["audit"]["status"] == OK
         assert len(http("http://127.0.0.1:8085/api/audit")) >= 4
         print("PASS anti-fraud, conserved mass/Fe, reset and persistent audit trail", flush=True)
+        a = state()['audit']
+        assert a['scale_timestamp'] < state()['virtual_time'] and a['lidar_timestamp'] < state()['virtual_time']
+        assert all(key in a for key in ('measured_stock', 'ground_truth_mass', 'lidar_dry_stock', 'audit_residual', 'audit_reason'))
+        assert thing('Mass_Balance')['attributes']['ground_truth_used_for_decisions'] is False
+        assert thing('Stockpile_01')['attributes']['measured_by']
+        print('PASS independent delayed measurements, typed contracts and semantic links', flush=True)
+
+        def scenario(name, enabled):
+            reply = http('http://127.0.0.1:8085/api/scenarios', data=json.dumps({'scenario': name, 'value': enabled}).encode())
+            assert reply['accepted'] == enabled
+            wait_for(f'HTTP -> MQTT -> Ditto scenario {name}={enabled}',
+                     lambda: state()['audit']['scenario_' + name] == enabled)
+
+        scenario('plant_erp', 1)
+        wait_for('plant stop -> full buffer -> two loaded trucks -> excavator IDLE',
+                 lambda: state()['audit']['buffer_fill_pct'] >= 99.999 and
+                 state()['audit']['truck_queue_length'] == 2 and state()['audit']['excavator_interlock'] == 1, timeout=180)
+        a = state()['audit']
+        assert a['audit_reason'] == 'ERP_DURING_DOWNTIME' and a['anomaly'] == 1
+        assert state()['twins']['Processing_Plant']['raw_inflow_rate']['properties']['value'] == 0
+        conserved(a)
+        scenario('plant_erp', 0)
+        wait_for('ERP reset and mill resumes without discarding inventory', lambda: state()['audit']['status'] == OK)
+        scenario('sensor_bias', 1)
+        wait_for('scale bias classified as instrument fault', lambda: state()['audit']['audit_reason'] == 'SENSOR_MISMATCH')
+        assert state()['audit']['recommendation'] == 'Проверить измерительный канал'
+        scenario('sensor_bias', 0)
+        wait_for('sensor calibration reset confirmed', lambda: state()['audit']['status'] == OK)
+        scenario('rain', 1)
+        wait_for('rain: stale ERP moisture classified without a theft claim', lambda: state()['audit']['audit_reason'] == 'MOISTURE_ERP_MISMATCH')
+        a = state()['audit']
+        assert a['moisture_pct'] == 7 and a['erp_moisture_pct'] == 3
+        assert a['recommendation'] == 'Требуется пересчет влажности / ошибка ERP'
+        assert abs(a['wet_scale_reading'] / a['measured_stock'] - 1.07) < 1e-9
+        assert abs(a['moisture_erp_offset'] - a['measured_stock'] * (1.07 / 1.03 - 1)) < 1e-7
+        conserved(a)
+        assert thing('Moisture_Sensor_01')['features']['moisture_pct']['properties']['value'] == 7
+        assert thing('ERP_Register')['features']['registered_moisture_pct']['properties']['value'] == 3
+        scenario('rain', 0)
+        wait_for('rain reset and fresh humidity measurements confirmed', lambda: state()['audit']['status'] == OK)
+        assert len(http('http://127.0.0.1:8085/api/scenarios')['events']) >= 4
+        print('PASS plant_erp, sensor_bias and rain, safe reset and persistent scenario audit trail', flush=True)
     finally:
+        for name in ('plant_erp', 'sensor_bias', 'rain'):
+            http('http://127.0.0.1:8085/api/scenarios', data=json.dumps({'scenario': name, 'value': 0}).encode())
         client.publish(FRAUD_TOPIC, "0", qos=1, retain=True).wait_for_publish(10)
         client.disconnect()
         client.loop_stop()

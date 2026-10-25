@@ -1,4 +1,4 @@
-import {setPaperFraud} from './api.js';
+import {setPaperFraud,setScenario} from './api.js';
 import {isFresh, fraudDirection} from './telemetry.js';
 
 export class FraudControl {
@@ -56,5 +56,31 @@ export class FraudControl {
       this.render(this.latest || {fraud: false, mqtt_connected: false});
       this.setMessage(error.message, true);
     }
+  }
+}
+
+export class ScenarioControl {
+  constructor({name,start,reset,status,message,send=setScenario}) {
+    Object.assign(this,{name,start,reset,status,message,send});
+    start.addEventListener('click',()=>this.command(1));
+    reset.addEventListener('click',()=>this.command(0));
+  }
+  render(data) {
+    this.latest=data;
+    const enabled=!!data.audit?.[`scenario_${this.name}`];
+    if(this.pending&&enabled===!!this.desired){this.pending=false;this.message.textContent='Подтверждено Ditto. Событие записано в журнал.';}
+    if(this.pending&&Date.now()>this.deadline){this.pending=false;this.message.textContent='Нет подтверждения. Проверьте связь и повторите команду.';}
+    const disabled=this.pending||!isFresh(data);
+    this.start.disabled=disabled||enabled;this.reset.disabled=disabled||!enabled;
+    this.status.textContent=this.pending?'Ожидание подтверждения':enabled?'Сценарий активен':'Штатный режим';
+    this.status.dataset.active=String(enabled);
+  }
+  async command(value) {
+    if(this.pending)return;
+    this.pending=true;this.desired=value;this.deadline=Date.now()+15000;
+    this.start.disabled=this.reset.disabled=true;
+    this.message.textContent='Передаем команду по MQTT…';
+    try {await this.send(this.name,value);}
+    catch(error){this.pending=false;this.render(this.latest||{});this.message.textContent=error.message;}
   }
 }

@@ -1,5 +1,6 @@
 get_helm.sh
 .venv
+.venv-presentation/
 venv
 
 # Credentials. The real file belongs at ~/openegiz-deploy/secrets.values.yaml

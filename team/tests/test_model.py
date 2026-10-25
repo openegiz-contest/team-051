@@ -89,7 +89,8 @@ class MassBalanceTests(unittest.TestCase):
         a = m.audit()
         self.assertAlmostEqual(math.pi * 25 * 15 * a["height"] / 3, a["reference_volume"])
         self.assertAlmostEqual(a["reference_volume"] * 2.7, m.stock)
-        self.assertAlmostEqual(a["scan_volume"], a["reference_volume"] * (1 + m.lidar_noise_fraction))
+        sample_stock = next(row[1] for row in m.erp_history if row[0] == a['lidar_timestamp'])
+        self.assertAlmostEqual(a["scan_volume"], sample_stock / 2.7 * (1 + m.lidar_noise_fraction))
 
     def test_checkpoint_replay_is_deterministic(self):
         m = Model()
@@ -116,16 +117,18 @@ class MassBalanceTests(unittest.TestCase):
         self.assertTrue(in_corridor(*PLANT, PIT, PLANT))
         self.assertFalse(in_corridor(PIT[0] + .1, PIT[1], PIT, PLANT))
 
-    def test_physical_imbalance_is_detected_without_fraud(self):
+    def test_audit_waits_for_independent_measurement_of_physical_loss(self):
         m = Model()
-        m.stock += 10
+        m.stock += 100
         self.assertFalse(m.fraud)
+        self.assertEqual(m.audit()["status"], OK)  # Hidden truth is not an audit input.
+        m.step(20)
         self.assertEqual(m.audit()["status"], CRITICAL)
 
     def test_twins_are_namespaced_and_parent_first(self):
         root = Path(__file__).resolve().parents[1]
         twins = json.loads((root / "twins.json").read_text(encoding="utf-8"))
-        self.assertEqual(len(twins), 14)
+        self.assertEqual(len(twins), 18)
         seen = set()
         for name, body in twins.items():
             parent = body["attributes"].get("_parents")
@@ -160,9 +163,12 @@ class MassBalanceTests(unittest.TestCase):
         m.step(3600)
         self.assertAlmostEqual(m.audit()["fraud_offset"], 5)
 
-    def test_lidar_is_bounded_nonzero_repeatable_and_never_makes_false_fraud(self):
+    def test_regular_lidar_noise_is_bounded_repeatable_and_within_audit_tolerance(self):
         for opening in (1., 3000., 1e6):
-            m = Model(stock=opening, initial_stock=opening)
+            m = Model(stock=opening, initial_stock=opening, max_stock_capacity=max(6000, opening + 1000), false_alarm_probability=0)
+            # Keep the 1 t calibration target on site: an empty pile correctly
+            # produces zero returns and cannot have a signed relative error.
+            m.rail_state, m.rail_elapsed = 'returning', -1e6
             samples = []
             for _ in range(500):
                 m.step(1)
@@ -178,7 +184,9 @@ class MassBalanceTests(unittest.TestCase):
             self.assertLess(abs(sum(samples) / len(samples)), .03)
         noiseless = Model(lidar_noise_pct=0)
         noiseless.step(100)
-        self.assertEqual(noiseless.audit()["scan_volume"], noiseless.audit()["reference_volume"])
+        a = noiseless.audit()
+        sample_stock = next(row[1] for row in noiseless.erp_history if row[0] == a['lidar_timestamp'])
+        self.assertAlmostEqual(a["scan_volume"], sample_stock / 2.7)
 
     def test_dry_basis_moisture_preserves_mass_and_iron(self):
         self.assertEqual(Model().moisture_pct, 3)
@@ -199,11 +207,11 @@ class MassBalanceTests(unittest.TestCase):
 
     def test_gross_lidar_failure_is_detected_outside_calibrated_uncertainty(self):
         m = Model()
-        m.lidar_noise_fraction = .02  # Sensor fault, outside the Gaussian model.
+        m.sensors['lidar_volume'] *= 1.02  # Fault injected into an independent instrument packet.
         a = m.audit()
         self.assertAlmostEqual(a["lidar_residual"], 60)
-        self.assertEqual(a["lidar_uncertainty_t"], 15)
-        self.assertAlmostEqual(a["lidar_validated_residual"], 45)
+        self.assertGreater(a["lidar_uncertainty_t"], 15)
+        self.assertGreater(abs(a["lidar_validated_residual"]), 44)
         self.assertEqual(a["status"], CRITICAL)
         self.assert_conserved(m)
 
@@ -271,7 +279,8 @@ class MassBalanceTests(unittest.TestCase):
         self.assertEqual(restored.drift_tonnes, 0)
 
     def test_new_factor_validation(self):
-        for kwargs in ({"fraud_mode": "unknown"}, {"moisture_pct": -1}, {"moisture_pct": math.nan}, {"drift_rate_tph": -1}, {"lidar_noise_pct": .6}):
+        for kwargs in ({"fraud_mode": "unknown"}, {"moisture_pct": -1}, {"moisture_pct": math.nan}, {"drift_rate_tph": -1}, {"lidar_noise_pct": .6},
+                       {'stock': 0, 'initial_stock': 0, 'max_stock_capacity': 0}, {'max_buffer_capacity': 89}):
             with self.assertRaises(ValueError):
                 Model(**kwargs)
         for target, enabled in (("Wagon_01", True), ("Truck_01", 1)):

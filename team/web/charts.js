@@ -3,6 +3,11 @@ import {TruckRoute,loopPoint} from './routes.js';
 
 const colors=['#66ceb8','#d9b373','#91b4e7','#bda8df','#dba5b4','#9bc5a6','#b6bfd4'];
 const smoothAlpha=dt=>1-Math.exp(-5*Math.max(0,Math.min(dt,.1)));
+export const historySeries=(showTruth=false)=>[
+  {key:'lidar_dry_stock',color:'#69cbb6',label:'Измерено LiDAR'},
+  {key:'book_stock',color:'#e59aa5',label:'Учет ERP'},
+  ...(showTruth?[{key:'ground_truth_mass',color:'#91b4e7',label:'Эталон симуляции'}]:[])
+];
 
 /** Geographic rail markers follow the same snapshot/RAF separation as trucks. */
 export class GeoMarker {
@@ -46,21 +51,24 @@ export function drawHistory(canvas,rows) {
   const pad={left:w<500?72:88,right:25,top:27,bottom:38};
   ctx.font='13px Inter, Segoe UI, sans-serif';
   if(!rows.length){ctx.fillStyle='#a5b7cc';ctx.fillText('Ожидаем первые измерения',20,h/2);return;}
-  const min=Math.min(...rows.flatMap(r=>[r.physical_stock,r.book_stock]))*.96,max=Math.max(...rows.flatMap(r=>[r.physical_stock,r.book_stock]))*1.04;
+  const series=historySeries(canvas.dataset.truth==='true');
+  const values=rows.flatMap(r=>series.map(s=>r[s.key])).filter(Number.isFinite);
+  if(!values.length)return;
+  const min=Math.min(...values)*.96,max=Math.max(...values)*1.04;
   const low=Math.max(0,min),high=Math.max(max,low+20),plotW=w-pad.left-pad.right,plotH=h-pad.top-pad.bottom;
   ctx.textAlign='right';
   for(let i=0;i<4;i++) {
     const y=pad.top+i*plotH/3;ctx.strokeStyle='#b4cdea0c';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pad.left,y);ctx.lineTo(w-pad.right,y);ctx.stroke();
     ctx.fillStyle='#9aadc4';ctx.fillText(number(high-i*(high-low)/3,0),pad.left-12,y+4);
   }
-  const time0=rows[0].time,time1=Math.max(time0+1,rows.at(-1).time);
-  const point=(r,key)=>[pad.left+(r.time-time0)/(time1-time0)*plotW,pad.top+(high-r[key])/(high-low)*plotH];
-  const trace=key=>{ctx.beginPath();rows.forEach((r,i)=>{const p=point(r,key);i?ctx.lineTo(...p):ctx.moveTo(...p);});};
+  const time0=Math.min(rows[0].time,rows[0].lidar_timestamp??rows[0].time),time1=Math.max(time0+1,rows.at(-1).time);
+  const point=(r,key)=>[pad.left+((key==='lidar_dry_stock'?r.lidar_timestamp??r.time:r.time)-time0)/(time1-time0)*plotW,pad.top+(high-r[key])/(high-low)*plotH];
+  const trace=key=>{ctx.beginPath();let first=true;for(const r of rows){if(!Number.isFinite(r[key])){first=true;continue;}const p=point(r,key);first?ctx.moveTo(...p):ctx.lineTo(...p);first=false;}};
   const gradient=ctx.createLinearGradient(0,pad.top,0,h);gradient.addColorStop(0,'#5ed5bb18');gradient.addColorStop(1,'#5ed5bb00');
-  trace('physical_stock');const end=point(rows.at(-1),'physical_stock');ctx.lineTo(end[0],h-pad.bottom);ctx.lineTo(pad.left,h-pad.bottom);ctx.closePath();ctx.fillStyle=gradient;ctx.fill();
-  for(const [key,color]of [['physical_stock','#69cbb6'],['book_stock','#e59aa5']]) {
+  trace('lidar_dry_stock');const end=point(rows.at(-1),'lidar_dry_stock');ctx.lineTo(end[0],h-pad.bottom);ctx.lineTo(pad.left,h-pad.bottom);ctx.closePath();ctx.fillStyle=gradient;ctx.fill();
+  for(const {key,color}of series) {
     trace(key);ctx.strokeStyle=color;ctx.lineWidth=1.8;ctx.lineJoin='round';ctx.stroke();
-    const p=point(rows.at(-1),key);ctx.beginPath();ctx.arc(...p,3,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();
+    if(Number.isFinite(rows.at(-1)[key])){const p=point(rows.at(-1),key);ctx.beginPath();ctx.arc(...p,3,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();}
   }
   ctx.textAlign='center';ctx.fillStyle='#9aadc4';
   for(let i=0;i<4;i++){const t=time0+(time1-time0)*i/3;ctx.fillText(`${Math.floor(t/3600)}:${String(Math.floor(t%3600/60)).padStart(2,'0')}`,pad.left+i*plotW/3,h-10);}

@@ -12,7 +12,7 @@ from urllib.request import Request, urlopen
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from model import FRAUD_TOPIC, MAINTENANCE_TOPIC
+from model import FRAUD_TOPIC, MAINTENANCE_TOPIC, SCENARIO_TOPIC
 from service import DittoReader, Runtime, Store, make_handler
 
 
@@ -31,12 +31,34 @@ class CapturingMQTT:
 
     def publish(self, topic, payload, qos, retain=False):
         self.published.append((topic, payload, qos, retain))
-        if topic == FRAUD_TOPIC or topic.startswith(MAINTENANCE_TOPIC):
+        if topic == FRAUD_TOPIC or topic.startswith(MAINTENANCE_TOPIC) or topic.startswith(SCENARIO_TOPIC):
             self.runtime.queue_control(topic, str(payload).encode(), "mqtt-test")
         return Ack()
 
 
 class ServiceTests(unittest.TestCase):
+    def test_cascade_scenario_api_mqtt_ditto_journal_and_cors(self):
+        for name in ('plant_erp', 'sensor_bias', 'rain'):
+            for value in (1, 0):
+                code, reply = self.request('/stepnoe/api/scenarios', {'scenario': name, 'value': value})
+                self.assertEqual(code, 202)
+                self.assertEqual(reply['topic'], SCENARIO_TOPIC + name)
+                self.runtime.advance(60)
+                result = self.request('/api/scenarios')[1]
+                self.assertEqual(result['objects'][name], bool(value))
+                self.assertEqual(result['events'][0]['enabled'], value)
+        self.assertEqual(len(self.store.scenario_events()), 6)
+        self.assertEqual(self.store.events(), [])
+        self.assertEqual(self.store.load('fixed').dump(), self.runtime.model.dump())
+        with urlopen(Request(self.url + '/stepnoe/api/scenarios', method='OPTIONS')) as reply:
+            self.assertEqual(reply.status, 204)
+            self.assertEqual(reply.headers['Access-Control-Allow-Origin'], '*')
+        for command in ({'scenario': 'bad', 'value': 1}, {'scenario': 'plant_erp', 'value': -1}, {'scenario': 'sensor_bias', 'value': True}):
+            with self.assertRaises(HTTPError) as error:
+                self.request('/api/scenarios', command)
+            self.assertEqual(error.exception.code, 400)
+            error.exception.close()
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.path = str(Path(self.temp.name) / "state.db")

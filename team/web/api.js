@@ -25,3 +25,6 @@ export const apiJSON = createAPI();
 export const setPaperFraud = value => apiJSON('fraud', {
   method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({value})
 });
+export const setScenario = (scenario, value) => apiJSON('scenarios', {
+  method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({scenario, value})
+});

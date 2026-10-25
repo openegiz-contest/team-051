@@ -8,7 +8,7 @@
         {
             "addresses": ["telemetry/+"],
             "consumerCount": 1,
-            "qos": 0,
+            "qos": 1,
             "authorizationContext": [
                 "nginx:ditto"
             ]

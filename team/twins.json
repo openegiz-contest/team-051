@@ -6,7 +6,47 @@
       "_isType": false,
       "kind": "mine",
       "data_source": "synthetic deterministic simulation",
-      "fictional": true
+      "fictional": true,
+      "feeds_to": [],
+      "feature_contracts": {
+        "mined": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "shipped": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "state": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "simulation_time": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "revision": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        }
+      },
+      "time_contract": {
+        "unit": "s",
+        "basis": "virtual_seconds_since_model_start",
+        "timestamps": [
+          "simulation_time"
+        ]
+      }
     },
     "features": {
       "mined": {
@@ -47,6 +87,36 @@
       "kind": "pit",
       "data_source": "synthetic deterministic simulation",
       "fictional": true,
+      "feeds_to": [
+        "org.stepnoe:Excavator_01"
+      ],
+      "feature_contracts": {
+        "mined": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "simulation_time": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "revision": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        }
+      },
+      "time_contract": {
+        "unit": "s",
+        "basis": "virtual_seconds_since_model_start",
+        "timestamps": [
+          "simulation_time"
+        ]
+      },
       "_parents": "org.stepnoe:Stepnoe",
       "parents": [
         "org.stepnoe:Stepnoe"
@@ -80,6 +150,61 @@
       "kind": "excavator",
       "data_source": "synthetic deterministic simulation",
       "fictional": true,
+      "feeds_to": [
+        "org.stepnoe:Truck_01",
+        "org.stepnoe:Truck_02"
+      ],
+      "feature_contracts": {
+        "bucket_weight": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "passes": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "mined": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "state": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "interlock": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "simulation_time": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "revision": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        }
+      },
+      "time_contract": {
+        "unit": "s",
+        "basis": "virtual_seconds_since_model_start",
+        "timestamps": [
+          "simulation_time"
+        ]
+      },
       "_parents": "org.stepnoe:Pit",
       "parents": [
         "org.stepnoe:Pit"
@@ -108,6 +233,11 @@
           "value": "loading"
         }
       },
+      "interlock": {
+        "properties": {
+          "value": 0
+        }
+      },
       "simulation_time": {
         "properties": {
           "value": 0,
@@ -129,9 +259,102 @@
       "kind": "truck",
       "data_source": "synthetic deterministic simulation",
       "fictional": true,
+      "feeds_to": [
+        "org.stepnoe:Processing_Plant"
+      ],
+      "feature_contracts": {
+        "lat": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "lon": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "weight": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "speed": {
+          "type": "number",
+          "unit": "km/h",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "state": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "maintenance": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "operating_state": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "blocked": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "elapsed": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "geofence": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "trips": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "simulation_time": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "revision": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        }
+      },
+      "time_contract": {
+        "unit": "s",
+        "basis": "virtual_seconds_since_model_start",
+        "timestamps": [
+          "simulation_time"
+        ]
+      },
       "_parents": "org.stepnoe:Pit",
       "parents": [
         "org.stepnoe:Pit"
+      ],
+      "measured_by": [
+        "org.stepnoe:Weighbridge_01"
       ],
       "maintenance_control_topic": "telemetry/control/maintenance/Truck_01",
       "capacity_t": 90
@@ -174,6 +397,11 @@
           "value": "loading"
         }
       },
+      "blocked": {
+        "properties": {
+          "value": 0
+        }
+      },
       "elapsed": {
         "properties": {
           "value": 0,
@@ -211,9 +439,102 @@
       "kind": "truck",
       "data_source": "synthetic deterministic simulation",
       "fictional": true,
+      "feeds_to": [
+        "org.stepnoe:Processing_Plant"
+      ],
+      "feature_contracts": {
+        "lat": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "lon": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "weight": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "speed": {
+          "type": "number",
+          "unit": "km/h",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "state": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "maintenance": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "operating_state": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "blocked": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "elapsed": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "geofence": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "trips": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "simulation_time": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "revision": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        }
+      },
+      "time_contract": {
+        "unit": "s",
+        "basis": "virtual_seconds_since_model_start",
+        "timestamps": [
+          "simulation_time"
+        ]
+      },
       "_parents": "org.stepnoe:Pit",
       "parents": [
         "org.stepnoe:Pit"
+      ],
+      "measured_by": [
+        "org.stepnoe:Weighbridge_01"
       ],
       "maintenance_control_topic": "telemetry/control/maintenance/Truck_02",
       "capacity_t": 90
@@ -256,6 +577,11 @@
           "value": "queued"
         }
       },
+      "blocked": {
+        "properties": {
+          "value": 0
+        }
+      },
       "elapsed": {
         "properties": {
           "value": 60,
@@ -293,13 +619,144 @@
       "kind": "plant",
       "data_source": "synthetic deterministic simulation",
       "fictional": true,
+      "feeds_to": [
+        "org.stepnoe:Stockpile_01"
+      ],
+      "feature_contracts": {
+        "raw_inflow": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "concentrate": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "tails": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "buffer": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "raw_inflow_rate": {
+          "type": "number",
+          "unit": "t/h",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "wet_inflow": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "wet",
+          "role": "telemetry"
+        },
+        "moisture": {
+          "type": "number",
+          "unit": "%",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "maintenance": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "manual_maintenance": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "buffer_capacity": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "buffer_fill_pct": {
+          "type": "number",
+          "unit": "%",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "truck_queue": {
+          "type": "array",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "state": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "feed_grade": {
+          "type": "number",
+          "unit": "% Fe",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "concentrate_grade": {
+          "type": "number",
+          "unit": "% Fe",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "recovery": {
+          "type": "number",
+          "unit": "%",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "tails_grade": {
+          "type": "number",
+          "unit": "% Fe",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "simulation_time": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "revision": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        }
+      },
+      "time_contract": {
+        "unit": "s",
+        "basis": "virtual_seconds_since_model_start",
+        "timestamps": [
+          "simulation_time"
+        ]
+      },
       "_parents": "org.stepnoe:Stepnoe",
       "parents": [
         "org.stepnoe:Stepnoe"
       ],
       "maintenance_control_topic": "telemetry/control/maintenance/Processing_Plant",
       "raw_inflow_semantics": "cumulative dry tonnes",
-      "instantaneous_flow_feature": "raw_inflow_rate"
+      "instantaneous_flow_feature": "raw_inflow_rate",
+      "max_buffer_capacity_t": 360.0,
+      "interlocks": [
+        "stock_full_stops_processing",
+        "buffer_full_blocks_truck_unloading"
+      ]
     },
     "features": {
       "raw_inflow": {
@@ -347,6 +804,28 @@
       "maintenance": {
         "properties": {
           "value": 0
+        }
+      },
+      "manual_maintenance": {
+        "properties": {
+          "value": 0
+        }
+      },
+      "buffer_capacity": {
+        "properties": {
+          "value": 360.0,
+          "unit": "t"
+        }
+      },
+      "buffer_fill_pct": {
+        "properties": {
+          "value": 0.0,
+          "unit": "%"
+        }
+      },
+      "truck_queue": {
+        "properties": {
+          "value": []
         }
       },
       "state": {
@@ -399,6 +878,140 @@
       "kind": "stockpile",
       "data_source": "synthetic deterministic simulation",
       "fictional": true,
+      "feeds_to": [
+        "org.stepnoe:Rail_Siding"
+      ],
+      "feature_contracts": {
+        "volume": {
+          "type": "number",
+          "unit": "m3",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "weight": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "simulation_reference_only"
+        },
+        "book_weight": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "density": {
+          "type": "number",
+          "unit": "t/m3",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "moisture": {
+          "type": "number",
+          "unit": "%",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "height": {
+          "type": "number",
+          "unit": "m",
+          "mass_basis": "not_applicable",
+          "role": "simulation_reference_only"
+        },
+        "fraud": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "wet_stock": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "wet",
+          "role": "simulation_reference_only"
+        },
+        "dry_stock": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "simulation_reference_only"
+        },
+        "wet_density": {
+          "type": "number",
+          "unit": "t/m3",
+          "mass_basis": "wet",
+          "role": "telemetry"
+        },
+        "reference_volume": {
+          "type": "number",
+          "unit": "m3",
+          "mass_basis": "not_applicable",
+          "role": "simulation_reference_only"
+        },
+        "lidar_dry_stock": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "lidar_uncertainty_t": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "weight_scale_reading": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "lidar_volume_reading": {
+          "type": "number",
+          "unit": "m3",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "scale_timestamp": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "lidar_timestamp": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "max_stock_capacity": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "simulation_time": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "revision": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        }
+      },
+      "time_contract": {
+        "unit": "s",
+        "basis": "virtual_seconds_since_model_start",
+        "timestamps": [
+          "simulation_time",
+          "scale_timestamp",
+          "lidar_timestamp"
+        ]
+      },
       "_parents": "org.stepnoe:Processing_Plant",
       "parents": [
         "org.stepnoe:Processing_Plant"
@@ -411,8 +1024,23 @@
       "mass_basis": "dry",
       "moisture_basis": "water/dry solid",
       "lidar_noise_bound_pct": 0.5,
-      "scan_volume_source": "bounded Gaussian raw measurement",
-      "physical_stock_source": "dry inventory from physical weighbridge transfers"
+      "scan_volume_source": "delayed synthetic surface ray integration with bounded Gaussian noise",
+      "physical_stock_source": "simulation ground truth; excluded from reconciliation",
+      "max_stock_capacity_t": 6000.0,
+      "measured_by": [
+        {
+          "thingId": "org.stepnoe:Weighbridge_01",
+          "feature": "weight_scale_reading"
+        },
+        {
+          "thingId": "org.stepnoe:LiDAR_01",
+          "feature": "volume"
+        },
+        {
+          "thingId": "org.stepnoe:Moisture_Sensor_01",
+          "feature": "moisture_pct"
+        }
+      ]
     },
     "features": {
       "volume": {
@@ -429,7 +1057,7 @@
       },
       "book_weight": {
         "properties": {
-          "value": 3000,
+          "value": 3000.0,
           "unit": "t"
         }
       },
@@ -488,8 +1116,633 @@
       },
       "lidar_uncertainty_t": {
         "properties": {
-          "value": 15.0,
+          "value": 15.075376884422111,
           "unit": "t"
+        }
+      },
+      "weight_scale_reading": {
+        "properties": {
+          "value": 3000.0,
+          "unit": "t"
+        }
+      },
+      "lidar_volume_reading": {
+        "properties": {
+          "value": 1111.111111111111,
+          "unit": "m3"
+        }
+      },
+      "scale_timestamp": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "lidar_timestamp": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "max_stock_capacity": {
+        "properties": {
+          "value": 6000.0,
+          "unit": "t"
+        }
+      },
+      "simulation_time": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "revision": {
+        "properties": {
+          "value": 0
+        }
+      }
+    }
+  },
+  "org.stepnoe:Weighbridge_01": {
+    "policyId": "default:basic_policy",
+    "attributes": {
+      "name": "Weighbridge_01",
+      "_isType": false,
+      "kind": "weighbridge",
+      "data_source": "synthetic deterministic simulation",
+      "fictional": true,
+      "feeds_to": [],
+      "feature_contracts": {
+        "weight_scale_reading": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "wet_reading": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "wet",
+          "role": "telemetry"
+        },
+        "moisture_at_sample": {
+          "type": "number",
+          "unit": "%",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "sample_timestamp": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "delay": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "uncertainty": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "calibration_factor": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "status": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "simulation_time": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "revision": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        }
+      },
+      "time_contract": {
+        "unit": "s",
+        "basis": "virtual_seconds_since_model_start",
+        "timestamps": [
+          "simulation_time",
+          "sample_timestamp"
+        ]
+      },
+      "_parents": "org.stepnoe:Processing_Plant",
+      "parents": [
+        "org.stepnoe:Processing_Plant"
+      ],
+      "independent_instrument": true,
+      "measurement_source": "synthetic instrument model",
+      "calibration_semantics": "gain multiplier; density separately calibrated for LiDAR",
+      "mass_basis": "dry_except_wet_reading",
+      "moisture_basis": "water/dry solid",
+      "observes": [
+        "org.stepnoe:Truck_01",
+        "org.stepnoe:Truck_02",
+        "org.stepnoe:Stockpile_01"
+      ],
+      "measurement_semantics": "stock-equivalent accumulator from physical weighbridge transfer pulses"
+    },
+    "features": {
+      "weight_scale_reading": {
+        "properties": {
+          "value": 3000.0,
+          "unit": "t"
+        }
+      },
+      "wet_reading": {
+        "properties": {
+          "value": 3090.0,
+          "unit": "t"
+        }
+      },
+      "moisture_at_sample": {
+        "properties": {
+          "value": 3.0,
+          "unit": "%"
+        }
+      },
+      "sample_timestamp": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "delay": {
+        "properties": {
+          "value": 5,
+          "unit": "s"
+        }
+      },
+      "uncertainty": {
+        "properties": {
+          "value": 0.06,
+          "unit": "t"
+        }
+      },
+      "calibration_factor": {
+        "properties": {
+          "value": 1.0
+        }
+      },
+      "status": {
+        "properties": {
+          "value": "OK"
+        }
+      },
+      "simulation_time": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "revision": {
+        "properties": {
+          "value": 0
+        }
+      }
+    }
+  },
+  "org.stepnoe:LiDAR_01": {
+    "policyId": "default:basic_policy",
+    "attributes": {
+      "name": "LiDAR_01",
+      "_isType": false,
+      "kind": "lidar-scanner",
+      "data_source": "synthetic deterministic simulation",
+      "fictional": true,
+      "feeds_to": [],
+      "feature_contracts": {
+        "volume": {
+          "type": "number",
+          "unit": "m3",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "dry_mass": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "sample_timestamp": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "delay": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "scan_period": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "uncertainty_pct": {
+          "type": "number",
+          "unit": "%",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "density_calibration": {
+          "type": "number",
+          "unit": "t/m3",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "calibration_factor": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "status": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "simulation_time": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "revision": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        }
+      },
+      "time_contract": {
+        "unit": "s",
+        "basis": "virtual_seconds_since_model_start",
+        "timestamps": [
+          "simulation_time",
+          "sample_timestamp"
+        ]
+      },
+      "_parents": "org.stepnoe:Stockpile_01",
+      "parents": [
+        "org.stepnoe:Stockpile_01"
+      ],
+      "independent_instrument": true,
+      "measurement_source": "synthetic instrument model",
+      "calibration_semantics": "gain multiplier; density separately calibrated for LiDAR",
+      "mass_basis": "dry_except_wet_reading",
+      "moisture_basis": "water/dry solid"
+    },
+    "features": {
+      "volume": {
+        "properties": {
+          "value": 1111.111111111111,
+          "unit": "m3"
+        }
+      },
+      "dry_mass": {
+        "properties": {
+          "value": 3000.0,
+          "unit": "t"
+        }
+      },
+      "sample_timestamp": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "delay": {
+        "properties": {
+          "value": 10,
+          "unit": "s"
+        }
+      },
+      "scan_period": {
+        "properties": {
+          "value": 10,
+          "unit": "s"
+        }
+      },
+      "uncertainty_pct": {
+        "properties": {
+          "value": 0.5,
+          "unit": "%"
+        }
+      },
+      "density_calibration": {
+        "properties": {
+          "value": 2.7,
+          "unit": "t/m3"
+        }
+      },
+      "calibration_factor": {
+        "properties": {
+          "value": 1.0
+        }
+      },
+      "status": {
+        "properties": {
+          "value": "OK"
+        }
+      },
+      "simulation_time": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "revision": {
+        "properties": {
+          "value": 0
+        }
+      }
+    }
+  },
+  "org.stepnoe:ERP_Register": {
+    "policyId": "default:basic_policy",
+    "attributes": {
+      "name": "ERP_Register",
+      "_isType": false,
+      "kind": "accounting-register",
+      "data_source": "synthetic deterministic simulation",
+      "fictional": true,
+      "feeds_to": [],
+      "feature_contracts": {
+        "book_stock": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "registered_moisture_pct": {
+          "type": "number",
+          "unit": "%",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "nominal_output_rate": {
+          "type": "number",
+          "unit": "t/h",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "sample_timestamp": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "delay": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "calibration_factor": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "status": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "simulation_time": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "revision": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        }
+      },
+      "time_contract": {
+        "unit": "s",
+        "basis": "virtual_seconds_since_model_start",
+        "timestamps": [
+          "simulation_time",
+          "sample_timestamp"
+        ]
+      },
+      "_parents": "org.stepnoe:Processing_Plant",
+      "parents": [
+        "org.stepnoe:Processing_Plant"
+      ],
+      "independent_instrument": true,
+      "measurement_source": "synthetic instrument model",
+      "calibration_semantics": "gain multiplier; density separately calibrated for LiDAR",
+      "mass_basis": "dry_except_wet_reading",
+      "moisture_basis": "water/dry solid",
+      "observes": [
+        "org.stepnoe:Processing_Plant",
+        "org.stepnoe:Stockpile_01"
+      ]
+    },
+    "features": {
+      "book_stock": {
+        "properties": {
+          "value": 3000.0,
+          "unit": "t"
+        }
+      },
+      "registered_moisture_pct": {
+        "properties": {
+          "value": 3.0,
+          "unit": "%"
+        }
+      },
+      "nominal_output_rate": {
+        "properties": {
+          "value": 0.0,
+          "unit": "t/h"
+        }
+      },
+      "sample_timestamp": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "delay": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "calibration_factor": {
+        "properties": {
+          "value": 1.0
+        }
+      },
+      "status": {
+        "properties": {
+          "value": "OK"
+        }
+      },
+      "simulation_time": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "revision": {
+        "properties": {
+          "value": 0
+        }
+      }
+    }
+  },
+  "org.stepnoe:Moisture_Sensor_01": {
+    "policyId": "default:basic_policy",
+    "attributes": {
+      "name": "Moisture_Sensor_01",
+      "_isType": false,
+      "kind": "moisture-sensor",
+      "data_source": "synthetic deterministic simulation",
+      "fictional": true,
+      "feeds_to": [],
+      "feature_contracts": {
+        "moisture_pct": {
+          "type": "number",
+          "unit": "%",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "sample_timestamp": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "moisture_at_scale_sample": {
+          "type": "number",
+          "unit": "%",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "scale_sample_timestamp": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "delay": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "calibration_factor": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "status": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "simulation_time": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "revision": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        }
+      },
+      "time_contract": {
+        "unit": "s",
+        "basis": "virtual_seconds_since_model_start",
+        "timestamps": [
+          "simulation_time",
+          "sample_timestamp",
+          "scale_sample_timestamp"
+        ]
+      },
+      "_parents": "org.stepnoe:Stockpile_01",
+      "parents": [
+        "org.stepnoe:Stockpile_01"
+      ],
+      "independent_instrument": true,
+      "measurement_source": "synthetic instrument model",
+      "calibration_semantics": "gain multiplier; density separately calibrated for LiDAR",
+      "mass_basis": "dry_except_wet_reading",
+      "moisture_basis": "water/dry solid"
+    },
+    "features": {
+      "moisture_pct": {
+        "properties": {
+          "value": 3.0,
+          "unit": "%"
+        }
+      },
+      "sample_timestamp": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "moisture_at_scale_sample": {
+        "properties": {
+          "value": 3.0,
+          "unit": "%"
+        }
+      },
+      "scale_sample_timestamp": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "delay": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "calibration_factor": {
+        "properties": {
+          "value": 1.0
+        }
+      },
+      "status": {
+        "properties": {
+          "value": "OK"
         }
       },
       "simulation_time": {
@@ -513,10 +1766,364 @@
       "kind": "audit",
       "data_source": "synthetic deterministic simulation",
       "fictional": true,
+      "feeds_to": [],
+      "feature_contracts": {
+        "physical_stock": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "simulation_reference_only"
+        },
+        "ground_truth_mass": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "simulation_reference_only"
+        },
+        "book_stock": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "scan_volume": {
+          "type": "number",
+          "unit": "m3",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "height": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "wet_stock": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "wet",
+          "role": "simulation_reference_only"
+        },
+        "dry_stock": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "simulation_reference_only"
+        },
+        "moisture_pct": {
+          "type": "number",
+          "unit": "%",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "erp_moisture_pct": {
+          "type": "number",
+          "unit": "%",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "reference_volume": {
+          "type": "number",
+          "unit": "m3",
+          "mass_basis": "not_applicable",
+          "role": "simulation_reference_only"
+        },
+        "wet_scale_reading": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "wet",
+          "role": "telemetry"
+        },
+        "scale_moisture_pct": {
+          "type": "number",
+          "unit": "%",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "moisture_erp_offset": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "lidar_noise_bound_pct": {
+          "type": "number",
+          "unit": "%",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "lidar_noise_pct": {
+          "type": "number",
+          "unit": "%",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "fraud_active": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "fraud_direction": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "fraud_mode": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "drift_rate_tph": {
+          "type": "number",
+          "unit": "t/h",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "fraud_offset": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "discrepancy_pct": {
+          "type": "number",
+          "unit": "%",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "stock_residual": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "simulation_reference_only"
+        },
+        "physical_residual": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "simulation_reference_only"
+        },
+        "book_residual": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "fe_residual": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "simulation_reference_only"
+        },
+        "inventory": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "simulation_reference_only"
+        },
+        "false_alarm_probability": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "stock_capacity": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "buffer_capacity": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "buffer_fill_pct": {
+          "type": "number",
+          "unit": "%",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "stock_fill_pct": {
+          "type": "number",
+          "unit": "%",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "truck_queue_length": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "excavator_interlock": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "scenario_plant_erp": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "scenario_sensor_bias": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "scenario_rain": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "erp_offset": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "scale_bias_pct": {
+          "type": "number",
+          "unit": "%",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "status": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "measured_stock": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "weight_scale_reading": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "lidar_volume_reading": {
+          "type": "number",
+          "unit": "m3",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "lidar_dry_stock": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "scale_timestamp": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "lidar_timestamp": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "audit_residual": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "lidar_residual": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "lidar_uncertainty_t": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "lidar_validated_residual": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "sensor_disagreement": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "audit_reason": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "recommendation": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "anomaly": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "simulation_time": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "revision": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        }
+      },
+      "time_contract": {
+        "unit": "s",
+        "basis": "virtual_seconds_since_model_start",
+        "timestamps": [
+          "simulation_time",
+          "scale_timestamp",
+          "lidar_timestamp"
+        ]
+      },
       "_parents": "org.stepnoe:Stepnoe",
       "parents": [
         "org.stepnoe:Stepnoe"
-      ]
+      ],
+      "audit_inputs": [
+        "org.stepnoe:Weighbridge_01",
+        "org.stepnoe:LiDAR_01",
+        "org.stepnoe:ERP_Register",
+        "org.stepnoe:Moisture_Sensor_01"
+      ],
+      "ground_truth_used_for_decisions": false,
+      "scenario_control_topics": {
+        "plant_erp": "telemetry/control/scenario/plant_erp",
+        "sensor_bias": "telemetry/control/scenario/sensor_bias",
+        "rain": "telemetry/control/scenario/rain"
+      }
     },
     "features": {
       "physical_stock": {
@@ -525,9 +2132,15 @@
           "unit": "t"
         }
       },
-      "book_stock": {
+      "ground_truth_mass": {
         "properties": {
           "value": 3000,
+          "unit": "t"
+        }
+      },
+      "book_stock": {
+        "properties": {
+          "value": 3000.0,
           "unit": "t"
         }
       },
@@ -560,34 +2173,40 @@
           "unit": "%"
         }
       },
+      "erp_moisture_pct": {
+        "properties": {
+          "value": 3.0,
+          "unit": "%"
+        }
+      },
       "reference_volume": {
         "properties": {
           "value": 1111.111111111111,
           "unit": "m3"
         }
       },
-      "lidar_dry_stock": {
+      "wet_scale_reading": {
         "properties": {
-          "value": 3000.0,
+          "value": 3090.0,
           "unit": "t"
         }
       },
-      "lidar_residual": {
+      "scale_moisture_pct": {
+        "properties": {
+          "value": 3.0,
+          "unit": "%"
+        }
+      },
+      "moisture_erp_offset": {
         "properties": {
           "value": 0.0,
           "unit": "t"
         }
       },
-      "lidar_uncertainty_t": {
+      "lidar_noise_bound_pct": {
         "properties": {
-          "value": 15.0,
-          "unit": "t"
-        }
-      },
-      "lidar_validated_residual": {
-        "properties": {
-          "value": 0.0,
-          "unit": "t"
+          "value": 0.5,
+          "unit": "%"
         }
       },
       "lidar_noise_pct": {
@@ -643,7 +2262,7 @@
       },
       "book_residual": {
         "properties": {
-          "value": 0,
+          "value": 0.0,
           "unit": "t"
         }
       },
@@ -659,14 +2278,156 @@
           "unit": "t"
         }
       },
-      "anomaly": {
+      "false_alarm_probability": {
+        "properties": {
+          "value": 1e-06
+        }
+      },
+      "stock_capacity": {
+        "properties": {
+          "value": 6000.0,
+          "unit": "t"
+        }
+      },
+      "buffer_capacity": {
+        "properties": {
+          "value": 360.0,
+          "unit": "t"
+        }
+      },
+      "buffer_fill_pct": {
+        "properties": {
+          "value": 0.0,
+          "unit": "%"
+        }
+      },
+      "stock_fill_pct": {
+        "properties": {
+          "value": 50.0,
+          "unit": "%"
+        }
+      },
+      "truck_queue_length": {
         "properties": {
           "value": 0
+        }
+      },
+      "excavator_interlock": {
+        "properties": {
+          "value": 0
+        }
+      },
+      "scenario_plant_erp": {
+        "properties": {
+          "value": 0
+        }
+      },
+      "scenario_sensor_bias": {
+        "properties": {
+          "value": 0
+        }
+      },
+      "scenario_rain": {
+        "properties": {
+          "value": 0
+        }
+      },
+      "erp_offset": {
+        "properties": {
+          "value": 0.0,
+          "unit": "t"
+        }
+      },
+      "scale_bias_pct": {
+        "properties": {
+          "value": 0.0,
+          "unit": "%"
         }
       },
       "status": {
         "properties": {
           "value": "BALANCE OK"
+        }
+      },
+      "measured_stock": {
+        "properties": {
+          "value": 3000.0,
+          "unit": "t"
+        }
+      },
+      "weight_scale_reading": {
+        "properties": {
+          "value": 3000.0,
+          "unit": "t"
+        }
+      },
+      "lidar_volume_reading": {
+        "properties": {
+          "value": 1111.111111111111,
+          "unit": "m3"
+        }
+      },
+      "lidar_dry_stock": {
+        "properties": {
+          "value": 3000.0,
+          "unit": "t"
+        }
+      },
+      "scale_timestamp": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "lidar_timestamp": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
+        }
+      },
+      "audit_residual": {
+        "properties": {
+          "value": 0.0,
+          "unit": "t"
+        }
+      },
+      "lidar_residual": {
+        "properties": {
+          "value": -0.0,
+          "unit": "t"
+        }
+      },
+      "lidar_uncertainty_t": {
+        "properties": {
+          "value": 15.075376884422111,
+          "unit": "t"
+        }
+      },
+      "lidar_validated_residual": {
+        "properties": {
+          "value": 0.0,
+          "unit": "t"
+        }
+      },
+      "sensor_disagreement": {
+        "properties": {
+          "value": 0.0,
+          "unit": "t"
+        }
+      },
+      "audit_reason": {
+        "properties": {
+          "value": "CONSISTENT"
+        }
+      },
+      "recommendation": {
+        "properties": {
+          "value": "Измерения и учет согласованы"
+        }
+      },
+      "anomaly": {
+        "properties": {
+          "value": 0
         }
       },
       "simulation_time": {
@@ -690,6 +2451,58 @@
       "kind": "rail-siding",
       "data_source": "synthetic deterministic simulation",
       "fictional": true,
+      "feeds_to": [
+        "org.stepnoe:Wagon_01",
+        "org.stepnoe:Wagon_02",
+        "org.stepnoe:Wagon_03",
+        "org.stepnoe:Wagon_04",
+        "org.stepnoe:Wagon_05"
+      ],
+      "feature_contracts": {
+        "loaded": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "shipped": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "departures": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "state": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "simulation_time": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "revision": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        }
+      },
+      "time_contract": {
+        "unit": "s",
+        "basis": "virtual_seconds_since_model_start",
+        "timestamps": [
+          "simulation_time"
+        ]
+      },
       "_parents": "org.stepnoe:Stepnoe",
       "parents": [
         "org.stepnoe:Stepnoe"
@@ -739,6 +2552,70 @@
       "kind": "wagon",
       "data_source": "synthetic deterministic simulation",
       "fictional": true,
+      "feeds_to": [],
+      "feature_contracts": {
+        "lat": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "lon": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "weight": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "weighbridge": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "state": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "speed": {
+          "type": "number",
+          "unit": "km/h",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "geofence": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "simulation_time": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "revision": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        }
+      },
+      "time_contract": {
+        "unit": "s",
+        "basis": "virtual_seconds_since_model_start",
+        "timestamps": [
+          "simulation_time"
+        ]
+      },
       "_parents": "org.stepnoe:Rail_Siding",
       "parents": [
         "org.stepnoe:Rail_Siding"
@@ -805,6 +2682,70 @@
       "kind": "wagon",
       "data_source": "synthetic deterministic simulation",
       "fictional": true,
+      "feeds_to": [],
+      "feature_contracts": {
+        "lat": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "lon": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "weight": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "weighbridge": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "state": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "speed": {
+          "type": "number",
+          "unit": "km/h",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "geofence": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "simulation_time": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "revision": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        }
+      },
+      "time_contract": {
+        "unit": "s",
+        "basis": "virtual_seconds_since_model_start",
+        "timestamps": [
+          "simulation_time"
+        ]
+      },
       "_parents": "org.stepnoe:Rail_Siding",
       "parents": [
         "org.stepnoe:Rail_Siding"
@@ -871,6 +2812,70 @@
       "kind": "wagon",
       "data_source": "synthetic deterministic simulation",
       "fictional": true,
+      "feeds_to": [],
+      "feature_contracts": {
+        "lat": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "lon": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "weight": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "weighbridge": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "state": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "speed": {
+          "type": "number",
+          "unit": "km/h",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "geofence": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "simulation_time": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "revision": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        }
+      },
+      "time_contract": {
+        "unit": "s",
+        "basis": "virtual_seconds_since_model_start",
+        "timestamps": [
+          "simulation_time"
+        ]
+      },
       "_parents": "org.stepnoe:Rail_Siding",
       "parents": [
         "org.stepnoe:Rail_Siding"
@@ -937,6 +2942,70 @@
       "kind": "wagon",
       "data_source": "synthetic deterministic simulation",
       "fictional": true,
+      "feeds_to": [],
+      "feature_contracts": {
+        "lat": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "lon": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "weight": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "weighbridge": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "state": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "speed": {
+          "type": "number",
+          "unit": "km/h",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "geofence": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "simulation_time": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "revision": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        }
+      },
+      "time_contract": {
+        "unit": "s",
+        "basis": "virtual_seconds_since_model_start",
+        "timestamps": [
+          "simulation_time"
+        ]
+      },
       "_parents": "org.stepnoe:Rail_Siding",
       "parents": [
         "org.stepnoe:Rail_Siding"
@@ -1003,6 +3072,70 @@
       "kind": "wagon",
       "data_source": "synthetic deterministic simulation",
       "fictional": true,
+      "feeds_to": [],
+      "feature_contracts": {
+        "lat": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "lon": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "weight": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "weighbridge": {
+          "type": "number",
+          "unit": "t",
+          "mass_basis": "dry",
+          "role": "telemetry"
+        },
+        "state": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "speed": {
+          "type": "number",
+          "unit": "km/h",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "geofence": {
+          "type": "string",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "simulation_time": {
+          "type": "number",
+          "unit": "s",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        },
+        "revision": {
+          "type": "number",
+          "unit": "1",
+          "mass_basis": "not_applicable",
+          "role": "telemetry"
+        }
+      },
+      "time_contract": {
+        "unit": "s",
+        "basis": "virtual_seconds_since_model_start",
+        "timestamps": [
+          "simulation_time"
+        ]
+      },
       "_parents": "org.stepnoe:Rail_Siding",
       "parents": [
         "org.stepnoe:Rail_Siding"
