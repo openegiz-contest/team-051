@@ -1,10 +1,22 @@
 """Rebuild reviewed Ditto JSON and Grafana dashboards, using only stdlib."""
 import json
+import hashlib
 from pathlib import Path
-from model import Model, NS
+from model import Model, NS, MAINTAINABLE, MAINTENANCE_TOPIC
 
 ROOT = Path(__file__).resolve().parent
 DS = {"type": "influxdb", "uid": "opentwins-influxdb"}
+WEB_VERSION = ""
+
+
+def web_assets():
+    """The Three.js distribution is vendored; no CDN/build step is required."""
+    global WEB_VERSION
+    required = ["index.html", "style.css", "app.js", "api.js", "controls.js", "telemetry.js", "charts.js", "models.js", "scene.js", "layout.js", "motion.js", "routes.js", "haul-road.js",
+                "vendor/three.module.js", "vendor/three.core.js", "vendor/OrbitControls.js", "vendor/THREE-LICENSE.txt"]
+    checksums = {name: hashlib.sha256((ROOT / "web" / name).read_bytes()).hexdigest() for name in required}
+    WEB_VERSION = hashlib.sha256(json.dumps(checksums, sort_keys=True).encode()).hexdigest()[:12]
+    write(ROOT / "web" / "manifest.json", {"version": WEB_VERSION, "three_version": "0.180.0", "sha256": checksums})
 
 
 def write(path, data):
@@ -27,6 +39,13 @@ def twins():
             attributes.update({"_parents": f"{NS}:{parents[name]}", "parents": [f"{NS}:{parents[name]}"]})
         if name == "Stockpile_01":
             attributes.update({"density_t_m3": 2.7, "geometry": "elliptic cone", "radius_x_m": 25, "radius_z_m": 15, "sensor": "synthetic LiDAR"})
+            attributes.update({"mass_basis": "dry", "moisture_basis": "water/dry solid", "lidar_noise_bound_pct": .5,
+                               "scan_volume_source": "bounded Gaussian raw measurement",
+                               "physical_stock_source": "dry inventory from physical weighbridge transfers"})
+        if name in MAINTAINABLE:
+            attributes["maintenance_control_topic"] = MAINTENANCE_TOPIC + name
+        if name == "Processing_Plant":
+            attributes.update({"raw_inflow_semantics": "cumulative dry tonnes", "instantaneous_flow_feature": "raw_inflow_rate"})
         if name.startswith("Truck"):
             attributes["capacity_t"] = 90
         if name.startswith("Wagon"):
@@ -45,59 +64,68 @@ def query(thing, field, last=False):
 
 
 def panel(title, thing, fields, x, y, w=12, h=7, kind="timeseries", unit="masst"):
-    p = {"title": title, "type": kind, "datasource": DS, "gridPos": {"x": x, "y": y, "w": w, "h": h},
-         "fieldConfig": {"defaults": {"unit": unit, "decimals": 2}, "overrides": []},
+    p = {"title": title, "type": kind, "datasource": DS, "transparent": True,
+         "description": "Телеметрия Eclipse Ditto через InfluxDB. Все массы приведены к сухому веществу; начальный запас 3000 т учитывается отдельно.",
+         "gridPos": {"x": x, "y": y, "w": w, "h": h},
+         "fieldConfig": {"defaults": {"unit": unit, "decimals": 1, "color": {"mode": "fixed", "fixedColor": "#69cbb6"}}, "overrides": []},
          "targets": [{"refId": chr(65 + i), "datasource": DS, "query": query(thing, f, kind == "stat")} for i, f in enumerate(fields)]}
-    p["options"] = ({"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": False}, "colorMode": "background", "graphMode": "none"}
+    p["options"] = ({"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": False}, "colorMode": "value", "graphMode": "area", "wideLayout": True}
                     if kind == "stat" else {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi"}})
+    if kind == "timeseries":
+        p["fieldConfig"]["defaults"]["custom"] = {"drawStyle": "line", "lineInterpolation": "smooth", "lineWidth": 2,
+            "fillOpacity": 7, "gradientMode": "opacity", "showPoints": "never", "spanNulls": False,
+            "axisBorderShow": False, "axisGridShow": True, "axisCenteredZero": False, "hideFrom": {"tooltip": False, "viz": False, "legend": False}}
+        if "physical_residual" in fields:
+            # Floating-point noise must not look like a material discrepancy.
+            # Soft limits still expand automatically for the 300 t fraud signal.
+            p["fieldConfig"]["defaults"]["custom"].update({"axisSoftMin": -1, "axisSoftMax": 1})
+    labels = {"physical_stock": "Физический склад", "book_stock": "Учетный отчет", "physical_residual": "Баланс массы", "book_residual": "Баланс учета",
+              "fe_residual": "Баланс Fe", "raw_inflow": "Сырая руда", "concentrate": "Концентрат", "tails": "Хвосты", "weight": "Груз",
+              "loaded": "Загружено", "shipped": "Отгружено", "feed_grade": "Fe на входе", "concentrate_grade": "Fe концентрата", "recovery": "Извлечение", "tails_grade": "Fe хвостов"}
+    colors = {"book_stock": "#ed9aa5", "book_residual": "#ed9aa5", "tails": "#dfbc83", "raw_inflow": "#8faee0", "fe_residual": "#8faee0"}
+    for i, field in enumerate(fields):
+        p["fieldConfig"]["overrides"].append({"matcher": {"id": "byFrameRefID", "options": chr(65 + i)}, "properties": [
+            {"id": "displayName", "value": labels.get(field, field)}, {"id": "color", "value": {"mode": "fixed", "fixedColor": colors.get(field, ["#69cbb6", "#8faee0", "#dfbc83", "#bfa8dc"][i % 4])}}]})
     return p
 
 
 def iframe(title, view, y, h):
-    # Relative URL is served through Grafana's own authenticated /stepnoe/ proxy.
-    return {"title": title, "type": "text", "gridPos": {"x": 0, "y": y, "w": 24, "h": h},
-            "options": {"mode": "html", "content": f'<iframe title="{title}" src="/stepnoe/?view={view}" style="width:100%;height:100%;border:0" loading="lazy"></iframe>'}}
+    # Panels share the UI; its /stepnoe/api/ CORS requests bypass Grafana auth.
+    return {"title": title, "type": "text", "transparent": True, "gridPos": {"x": 0, "y": y, "w": 24, "h": h},
+            "options": {"mode": "html", "content": f'<iframe title="{title}" src="/stepnoe/index.html?view={view}&amp;v={WEB_VERSION}" style="display:block;width:100%;height:100%;border:0;border-radius:16px;background:#101722" allow="fullscreen" loading="lazy"></iframe>'}}
 
 
 def dashboard(uid, title, panels):
     for i, p in enumerate(panels, 1):
         p["id"] = i
     write(ROOT / "dashboards" / (uid + ".json"), {
-        "uid": uid, "title": title, "schemaVersion": 39, "version": 1, "editable": True,
+        "uid": uid, "title": title, "schemaVersion": 39, "version": 2, "editable": True,
         "tags": ["stepnoe", "mass-balance", "synthetic"], "timezone": "browser", "refresh": "5s",
         "time": {"from": "now-30m", "to": "now"}, "panels": panels,
         "links": [{"title": label, "type": "link", "url": f"/d/{target}", "keepTime": True} for label, target in
                   [("Executive overview", "stepnoe-overview"), ("Mass balance audit", "stepnoe-audit"), ("Logistics", "stepnoe-logistics")]],
-        "description": "Stepnoe fictional iron-ore mine. Synthetic telemetry via MQTT -> Ditto -> Telegraf -> InfluxDB. Dry-tonne basis; opening inventory 3000 t. 3D scene uses a local Canvas renderer, not a compiled Unity scene."})
+        "description": "ГОК «Степное». Пространственная Three.js-диорама с телеметрией Ditto, независимый баланс массы и Fe. Синтетические датчики, начальный запас 3000 т; физический склад и учетный объем отображаются раздельно."})
 
 
 def dashboards():
     dashboard("stepnoe-overview", "Executive Overview & 3D Mine View", [
-        panel("Physical scanned stock", "Stockpile_01", ["weight"], 0, 0, 6, 4, "stat"),
-        panel("Book stock", "Stockpile_01", ["book_weight"], 6, 0, 6, 4, "stat"),
-        panel("Rail weighbridge shipped", "Rail_Siding", ["shipped"], 12, 0, 6, 4, "stat"),
-        panel("Scan volume", "Stockpile_01", ["volume"], 18, 0, 6, 4, "stat", "m3"),
-        iframe("Stepnoe 3D mine / synthetic LiDAR", "mine", 4, 17),
-        panel("Physical flows", "Processing_Plant", ["raw_inflow", "concentrate", "tails"], 0, 21, 24)])
-    status = panel("Accounting status", "Mass_Balance", ["anomaly"], 0, 0, 8, 4, "stat", "none")
-    status["fieldConfig"]["defaults"].update({"color": {"mode": "thresholds"},
-        "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": None}, {"color": "red", "value": 1}]},
-        "mappings": [{"type": "value", "options": {"0": {"text": "BALANCE OK", "color": "green"}, "1": {"text": "CRITICAL ANOMALY: Mass Balance Mismatch", "color": "red"}}}]})
-    dashboard("stepnoe-audit", "Mass Balance & Anti-Fraud Audit", [status,
-        panel("Unverified ore", "Mass_Balance", ["fraud_offset"], 8, 0, 8, 4, "stat"),
-        panel("Unverified / scanned stock", "Mass_Balance", ["discrepancy_pct"], 16, 0, 8, 4, "stat", "percent"),
-        iframe("Anti-Fraud Controls — Simulate Paper Fraud", "audit", 4, 11),
-        panel("3D scan vs accounting", "Mass_Balance", ["physical_stock", "book_stock"], 0, 15),
-        panel("Physical, book and Fe residuals", "Mass_Balance", ["physical_residual", "book_residual", "fe_residual"], 12, 15),
-        panel("Plant: feed = concentrate + tails", "Processing_Plant", ["raw_inflow", "concentrate", "tails"], 0, 22),
-        panel("Fe grades and recovery", "Processing_Plant", ["feed_grade", "concentrate_grade", "recovery", "tails_grade"], 12, 22, unit="percent")])
+        iframe("Рудник в реальном времени · 3D-диорама", "mine", 0, 28),
+        panel("От сырья к концентрату", "Processing_Plant", ["raw_inflow", "concentrate", "tails"], 0, 28, 14, 9),
+        panel("Качество обогащения", "Processing_Plant", ["feed_grade", "concentrate_grade", "recovery"], 14, 28, 10, 9, unit="percent")])
+    dashboard("stepnoe-audit", "Mass Balance & Anti-Fraud Audit", [
+        iframe("Anti-Fraud Controls — Simulate Paper Fraud", "audit", 0, 30),
+        panel("3D-скан и учетный остаток", "Mass_Balance", ["physical_stock", "book_stock"], 0, 30, 12, 9),
+        panel("Независимые балансы массы и железа", "Mass_Balance", ["physical_residual", "book_residual", "fe_residual"], 12, 30, 12, 9),
+        panel("Фабрика: руда = концентрат + хвосты", "Processing_Plant", ["raw_inflow", "concentrate", "tails"], 0, 39, 12, 8),
+        panel("Содержание Fe и извлечение", "Processing_Plant", ["feed_grade", "concentrate_grade", "recovery", "tails_grade"], 12, 39, 12, 8, unit="percent")])
     dashboard("stepnoe-logistics", "Logistics & Geofencing", [
-        iframe("Live local map — truck and rail tracks / geofences", "map", 0, 17),
-        panel("Truck 01 payload", "Truck_01", ["weight"], 0, 17),
-        panel("Truck 02 payload", "Truck_02", ["weight"], 12, 17),
-        panel("Rail: loaded vs departed", "Rail_Siding", ["loaded", "shipped"], 0, 24, 24)])
+        iframe("Маршруты техники и геозоны", "map", 0, 32),
+        panel("Самосвал № 1 · загрузка", "Truck_01", ["weight"], 0, 32, 12, 8),
+        panel("Самосвал № 2 · загрузка", "Truck_02", ["weight"], 12, 32, 12, 8),
+        panel("ЖД: погрузка и подтвержденная отгрузка", "Rail_Siding", ["loaded", "shipped"], 0, 40, 24, 8)])
 
 
 if __name__ == "__main__":
     twins()
+    web_assets()
     dashboards()

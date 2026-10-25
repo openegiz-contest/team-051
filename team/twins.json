@@ -133,6 +133,7 @@
       "parents": [
         "org.stepnoe:Pit"
       ],
+      "maintenance_control_topic": "telemetry/control/maintenance/Truck_01",
       "capacity_t": 90
     },
     "features": {
@@ -161,6 +162,22 @@
       "state": {
         "properties": {
           "value": "loading"
+        }
+      },
+      "maintenance": {
+        "properties": {
+          "value": 0
+        }
+      },
+      "operating_state": {
+        "properties": {
+          "value": "loading"
+        }
+      },
+      "elapsed": {
+        "properties": {
+          "value": 0,
+          "unit": "s"
         }
       },
       "geofence": {
@@ -198,6 +215,7 @@
       "parents": [
         "org.stepnoe:Pit"
       ],
+      "maintenance_control_topic": "telemetry/control/maintenance/Truck_02",
       "capacity_t": 90
     },
     "features": {
@@ -226,6 +244,22 @@
       "state": {
         "properties": {
           "value": "queued"
+        }
+      },
+      "maintenance": {
+        "properties": {
+          "value": 0
+        }
+      },
+      "operating_state": {
+        "properties": {
+          "value": "queued"
+        }
+      },
+      "elapsed": {
+        "properties": {
+          "value": 60,
+          "unit": "s"
         }
       },
       "geofence": {
@@ -262,7 +296,10 @@
       "_parents": "org.stepnoe:Stepnoe",
       "parents": [
         "org.stepnoe:Stepnoe"
-      ]
+      ],
+      "maintenance_control_topic": "telemetry/control/maintenance/Processing_Plant",
+      "raw_inflow_semantics": "cumulative dry tonnes",
+      "instantaneous_flow_feature": "raw_inflow_rate"
     },
     "features": {
       "raw_inflow": {
@@ -287,6 +324,34 @@
         "properties": {
           "value": 0,
           "unit": "t"
+        }
+      },
+      "raw_inflow_rate": {
+        "properties": {
+          "value": 0.0,
+          "unit": "t/h"
+        }
+      },
+      "wet_inflow": {
+        "properties": {
+          "value": 0.0,
+          "unit": "t"
+        }
+      },
+      "moisture": {
+        "properties": {
+          "value": 3.0,
+          "unit": "%"
+        }
+      },
+      "maintenance": {
+        "properties": {
+          "value": 0
+        }
+      },
+      "state": {
+        "properties": {
+          "value": "running"
         }
       },
       "feed_grade": {
@@ -342,7 +407,12 @@
       "geometry": "elliptic cone",
       "radius_x_m": 25,
       "radius_z_m": 15,
-      "sensor": "synthetic LiDAR"
+      "sensor": "synthetic LiDAR",
+      "mass_basis": "dry",
+      "moisture_basis": "water/dry solid",
+      "lidar_noise_bound_pct": 0.5,
+      "scan_volume_source": "bounded Gaussian raw measurement",
+      "physical_stock_source": "dry inventory from physical weighbridge transfers"
     },
     "features": {
       "volume": {
@@ -353,13 +423,13 @@
       },
       "weight": {
         "properties": {
-          "value": 3000.0,
+          "value": 3000,
           "unit": "t"
         }
       },
       "book_weight": {
         "properties": {
-          "value": 3000.0,
+          "value": 3000,
           "unit": "t"
         }
       },
@@ -371,7 +441,7 @@
       },
       "moisture": {
         "properties": {
-          "value": 0,
+          "value": 3.0,
           "unit": "%"
         }
       },
@@ -384,6 +454,42 @@
       "fraud": {
         "properties": {
           "value": 0
+        }
+      },
+      "wet_stock": {
+        "properties": {
+          "value": 3090.0,
+          "unit": "t"
+        }
+      },
+      "dry_stock": {
+        "properties": {
+          "value": 3000.0,
+          "unit": "t"
+        }
+      },
+      "wet_density": {
+        "properties": {
+          "value": 2.781,
+          "unit": "t/m3"
+        }
+      },
+      "reference_volume": {
+        "properties": {
+          "value": 1111.111111111111,
+          "unit": "m3"
+        }
+      },
+      "lidar_dry_stock": {
+        "properties": {
+          "value": 3000.0,
+          "unit": "t"
+        }
+      },
+      "lidar_uncertainty_t": {
+        "properties": {
+          "value": 15.0,
+          "unit": "t"
         }
       },
       "simulation_time": {
@@ -415,24 +521,100 @@
     "features": {
       "physical_stock": {
         "properties": {
-          "value": 3000.0,
+          "value": 3000,
           "unit": "t"
         }
       },
       "book_stock": {
         "properties": {
-          "value": 3000.0,
+          "value": 3000,
           "unit": "t"
         }
       },
       "scan_volume": {
         "properties": {
-          "value": 1111.111111111111
+          "value": 1111.111111111111,
+          "unit": "m3"
         }
       },
       "height": {
         "properties": {
           "value": 2.8294212105225838
+        }
+      },
+      "wet_stock": {
+        "properties": {
+          "value": 3090.0,
+          "unit": "t"
+        }
+      },
+      "dry_stock": {
+        "properties": {
+          "value": 3000.0,
+          "unit": "t"
+        }
+      },
+      "moisture_pct": {
+        "properties": {
+          "value": 3.0,
+          "unit": "%"
+        }
+      },
+      "reference_volume": {
+        "properties": {
+          "value": 1111.111111111111,
+          "unit": "m3"
+        }
+      },
+      "lidar_dry_stock": {
+        "properties": {
+          "value": 3000.0,
+          "unit": "t"
+        }
+      },
+      "lidar_residual": {
+        "properties": {
+          "value": 0.0,
+          "unit": "t"
+        }
+      },
+      "lidar_uncertainty_t": {
+        "properties": {
+          "value": 15.0,
+          "unit": "t"
+        }
+      },
+      "lidar_validated_residual": {
+        "properties": {
+          "value": 0.0,
+          "unit": "t"
+        }
+      },
+      "lidar_noise_pct": {
+        "properties": {
+          "value": 0.0,
+          "unit": "%"
+        }
+      },
+      "fraud_active": {
+        "properties": {
+          "value": 0
+        }
+      },
+      "fraud_direction": {
+        "properties": {
+          "value": 1
+        }
+      },
+      "fraud_mode": {
+        "properties": {
+          "value": "fixed"
+        }
+      },
+      "drift_rate_tph": {
+        "properties": {
+          "value": 5.0,
+          "unit": "t/h"
         }
       },
       "fraud_offset": {
@@ -443,12 +625,13 @@
       },
       "discrepancy_pct": {
         "properties": {
-          "value": 0.0
+          "value": 0.0,
+          "unit": "%"
         }
       },
       "stock_residual": {
         "properties": {
-          "value": 0.0,
+          "value": 0,
           "unit": "t"
         }
       },
@@ -460,7 +643,7 @@
       },
       "book_residual": {
         "properties": {
-          "value": 0.0,
+          "value": 0,
           "unit": "t"
         }
       },

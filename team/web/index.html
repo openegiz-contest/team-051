@@ -1,20 +1,89 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Степное · цифровой баланс</title><link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101722">
+  <title>Степное — цифровой двойник производства</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600;650;700;750&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/stepnoe/style.css">
+  <script type="importmap">{"imports":{"three":"/stepnoe/vendor/three.module.js"}}</script>
 </head>
 <body>
-<header><div class="brand"><span class="mark">С</span><div><strong>СТЕПНОЕ</strong><small>ЦИФРОВОЙ РУДНИК / OPENEGIZ</small></div></div><div class="live" id="connection">Соединение…</div></header>
-<main>
-  <section class="heading"><div><p class="eyebrow">ОТ ФИЗИЧЕСКОГО ПОТОКА К УЧЕТУ</p><h1 id="title">Прозрачность каждой тонны</h1><p id="subtitle">Синтетический производственный стенд · сухая масса · виртуальный объект</p></div><div class="clock"><span>ВИРТУАЛЬНОЕ ВРЕМЯ</span><strong id="clock">—</strong></div></section>
-  <section class="metrics"><article><label>3D-скан склада</label><strong id="physical">—</strong><small>Физический остаток, т</small></article><article><label>Учетный остаток</label><strong id="book">—</strong><small>Бумажный отчет, т</small></article><article><label>Неподтвержденная масса</label><strong id="offset">—</strong><small id="percent">Сверка с физическими датчиками</small></article><article><label>Физический баланс</label><strong id="residual">—</strong><small>Начальный запас + вход − выход − запас, т</small></article></section>
-  <section id="mine" class="surface"><div class="surface-title"><div><span class="dot"></span>3D МОДЕЛЬ ПРОИЗВОДСТВА</div><span>Вращение: перетаскивание · масштаб: колесо · выбор: клик</span></div><canvas id="scene" aria-label="Интерактивная трехмерная модель склада и рудника"></canvas><div class="legend"><span><i class="cyan"></i>Физическая геометрия</span><span><i class="red"></i>Приписка (не физический объем)</span><span id="geometry">—</span></div><div id="selection" class="selection">Выберите объект на сцене</div></section>
-  <section id="controls" class="surface controls"><div><p class="eyebrow">ANTI-FRAUD CONTROLS</p><h2>Simulate Paper Fraud</h2><p id="mode">Приписка +300 т в учетном отчете</p><small>MQTT → независимая сверка весовых и 3D-скана → аудиторский след</small></div><div><label class="switch"><input type="checkbox" id="fraud" aria-label="Simulate Paper Fraud"><span></span></label><strong id="toggle-state">OFF</strong><button id="reset">Сбросить сценарий</button></div><div class="status" id="status">Ожидание данных</div><p id="command" role="status"></p></section>
-  <section id="chart-section" class="surface"><div class="surface-title">ФИЗИЧЕСКИЙ СКЛАД И УЧЕТ <span>Тонны / виртуальное время · последние 900 отсчетов</span></div><canvas id="chart" aria-label="График физического и учетного остатка"></canvas><div class="legend"><span><i class="cyan"></i>3D-скан</span><span><i class="red"></i>Учет</span></div></section>
-  <section id="map-section" class="surface"><div class="surface-title">LOGISTICS & GEOFENCING <select id="extent" aria-label="Область карты"><option value="mine">Карьер и фабрика</option><option value="rail">ЖД-коридор 65 км</option></select></div><canvas id="map" aria-label="Координатная карта маршрутов самосвалов и вагонов"></canvas><div class="legend">Локальная координатная карта без внешних тайлов · коридор ±150 м · следы текущего сеанса браузера</div><div id="vehicles" class="vehicles"></div></section>
-  <section id="events-section" class="surface"><div class="surface-title">АУДИТОРСКИЙ СЛЕД <span>Сохраняется в SQLite при перезапусках</span></div><div class="table-scroll"><table><thead><tr><th>№</th><th>Время UTC</th><th>Команда</th><th>Физический, т</th><th>Учетный, т</th><th>Источник</th></tr></thead><tbody id="events"></tbody></table></div></section>
-  <footer>Вымышленный ГОК «Степное» · все датчики моделируются · ρ = 2.7 т/м³ · влажность 0% · 3D Canvas, без Unity</footer>
-</main>
-<script src="app.js"></script>
-</body></html>
+  <aside class="virtual-clock" aria-label="Виртуальное время модели"><span>ВИРТУАЛЬНОЕ ВРЕМЯ</span><strong id="clock">—</strong></aside>
+  <aside class="sidebar" aria-label="Навигация">
+    <a class="logo" href="/stepnoe/" aria-label="Степное, обзор"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m4 24 9-17 5 9 4-6 7 14H4Z"/><path d="m9 24 5-9 5 9"/></svg></a>
+    <nav>
+      <a href="/stepnoe/?view=mine&full=1" data-nav="mine" title="Обзор рудника" aria-label="Обзор рудника"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></a>
+      <a href="/stepnoe/?view=audit&full=1" data-nav="audit" title="Аудит баланса" aria-label="Аудит баланса"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 8 9 8 9s8-4 8-9V6l-8-3Z"/><path d="m8 12 3 3 5-6"/></svg></a>
+      <a href="/stepnoe/?view=map&full=1" data-nav="map" title="Логистика" aria-label="Логистика"><svg viewBox="0 0 24 24"><path d="m3 5 6-2 6 3 6-2v15l-6 2-6-3-6 2V5Zm6-2v15m6-12v15"/></svg></a>
+    </nav>
+    <a class="sidebar-bottom" href="/d/stepnoe-overview" title="Дашборды Grafana" aria-label="Дашборды Grafana"><svg viewBox="0 0 24 24"><path d="M4 17V7h16v10H4Zm4 4h8M12 17v4M8 13l3-3 3 2 3-4"/></svg></a>
+  </aside>
+  <div class="shell">
+    <header class="topbar">
+      <div class="breadcrumb">Промышленная аналитика <span>/</span> <strong>ГОК «Степное»</strong></div>
+      <div class="topbar-right"><span class="live-pill" id="connection"><i></i><span id="connection-text">Подключение</span></span><div class="avatar" title="Финансовый контролер">ФК</div></div>
+      <nav class="view-tabs" id="view-tabs" aria-label="Режим интерфейса" hidden>
+        <button type="button" data-view-button="mine" aria-pressed="true">Обзор рудника</button>
+        <button type="button" data-view-button="map" aria-pressed="false">Логистика и техника</button>
+        <button type="button" data-view-button="audit" aria-pressed="false">Анти-фрод и аудит</button>
+      </nav>
+    </header>
+    <main>
+      <section class="hero">
+        <div><p class="eyebrow">Единая картина производства</p><h1>Каждая тонна под контролем<span>.</span></h1><p class="hero-copy">От забоя до отгрузки. Физические потоки и учет — в одном цифровом двойнике.</p></div>
+        <div class="balance-pill" id="balance-pill"><span class="status-symbol">✓</span><div><strong id="balance-title">Ожидание данных</strong><small id="balance-subtitle">Сверка весовых и 3D-скана</small></div></div>
+      </section>
+
+      <section class="metrics" aria-label="Ключевые показатели">
+        <article class="metric"><div class="metric-title"><span class="metric-icon teal">◈</span>Физический остаток <span class="help-wrap"><button class="help" type="button" aria-label="Как рассчитан физический остаток" aria-describedby="tip-physical">?</button><span class="tooltip" role="tooltip" id="tip-physical">Сухой физический запас по перемещениям массы и весовым. Сырой LiDAR-объем содержит шум до ±0.5%; его погрешность показана отдельно и не считается потерей руды.</span></span></div><div class="metric-value"><strong id="physical">—</strong><span>т</span></div><div class="metric-foot"><span class="tiny-dot"></span>Весовые и контроль LiDAR<svg class="sparkline" id="spark-physical" viewBox="0 0 94 24" aria-hidden="true"></svg></div></article>
+        <article class="metric"><div class="metric-title"><span class="metric-icon blue">▤</span>Учетный остаток <span class="help-wrap"><button class="help" type="button" aria-label="Что означает учетный остаток" aria-describedby="tip-book">?</button><span class="tooltip" role="tooltip" id="tip-book">Остаток в отчетности. Обычно совпадает с физическим. Приписка завышает его, а сокрытие занижает. Физическая масса не меняется.</span></span></div><div class="metric-value"><strong id="book">—</strong><span>т</span></div><div class="metric-foot">Сведения учетной системы<svg class="sparkline blue-line" id="spark-book" viewBox="0 0 94 24" aria-hidden="true"></svg></div></article>
+        <article class="metric" id="discrepancy-card"><div class="metric-title"><span class="metric-icon amber">△</span>Неподтвержденная масса <span class="help-wrap"><button class="help" type="button" aria-label="Как рассчитано расхождение" aria-describedby="tip-offset">?</button><span class="tooltip" role="tooltip" id="tip-offset">Учетный остаток минус физический. +300 т означает приписку, −300 т — сокрытие имеющегося остатка. Оба случая требуют проверки.</span></span></div><div class="metric-value"><strong id="offset">—</strong><span>т</span></div><div class="metric-foot"><span id="percent">Ожидание сверки</span><span class="small-badge" id="audit-badge">Аудит</span></div></article>
+        <article class="metric"><div class="metric-title"><span class="metric-icon mint">⇄</span>Физический баланс <span class="help-wrap"><button class="help" type="button" aria-label="Как рассчитан физический баланс" aria-describedby="tip-balance">?</button><span class="tooltip" role="tooltip" id="tip-balance">Начальный запас + добыча − хвосты − отгрузка − все текущие запасы. Учтены руда в пути, буфер фабрики и загруженные вагоны.</span></span></div><div class="metric-value"><strong id="residual">—</strong><span>т</span></div><div class="metric-foot"><span class="tiny-dot"></span>Закон сохранения массы</div></article>
+      </section>
+
+      <section class="workspace" id="workspace">
+        <article class="panel scene-panel" id="mine">
+          <div class="panel-heading"><div><p class="eyebrow">Пространственная модель</p><h2>Рудник в реальном времени</h2></div><div class="scene-actions"><button id="camera-reset" class="icon-button" title="Изометрический вид" aria-label="Изометрический вид">⌂</button><button id="camera-stock" class="subtle-button">К складу <span>↗</span></button><button id="fullscreen" class="icon-button" title="Полноэкранная сцена" aria-label="Полноэкранная сцена">⛶</button></div></div>
+          <div class="scene-stage" id="scene-stage">
+            <canvas id="scene" aria-label="Изометрическая интерактивная 3D-модель рудника"></canvas>
+            <div id="scene-labels" class="scene-labels"></div>
+            <div id="object-tooltip" class="object-tooltip" hidden></div>
+            <div class="scene-loading" id="scene-loading"><span class="loader"></span>Подготавливаем цифровой рудник…</div>
+            <div class="scene-corner"><span class="tiny-dot"></span>Синтетическая телеметрия · Ditto</div>
+            <div class="ghost-callout" id="ghost-callout" hidden><span>△</span><div><strong id="ghost-mass">+300 т</strong><small id="ghost-description">Есть в отчете. Нет на складе.</small></div></div>
+            <div class="orientation" aria-label="Ориентация сцены"><span>С</span><svg viewBox="0 0 32 32"><path d="m16 3 6 20-6-4-6 4 6-20Z"/></svg></div>
+          </div>
+          <div class="scene-footer"><div class="legend"><span><i class="teal-bg"></i>Физический склад</span><span><i class="red-outline"></i>Учетный объем</span></div><span class="scene-hint" title="Размер склада нормирован к текущему запасу; физический и учетный объемы имеют общий масштаб. Значения массы и плотности в аудите не изменяются.">Схема · масштаб склада нормирован · LiDAR → аудит</span></div>
+        </article>
+        <aside class="detail-column">
+          <section class="panel controls" id="controls">
+            <div class="control-heading"><span class="section-icon">◉</span><span>Сценарий «Что если»</span><span class="small-badge">Аудит</span></div>
+            <h2>А если отчет искажен?</h2><p id="mode">Система обнаруживает расхождение в обе стороны. Физический остаток остается неизменным.</p>
+            <label class="scenario-mode" for="fraud-mode"><span>Направление расхождения</span><select id="fraud-mode" disabled><option value="1">Приписка в отчете (+300 т)</option><option value="-1">Сокрытие остатка (−300 т)</option></select></label>
+            <div class="toggle-row"><div><strong>Simulate Paper Fraud</strong><small id="fraud-direction">Учет больше физического остатка</small></div><label class="switch"><input type="checkbox" id="fraud" aria-label="Simulate Paper Fraud" disabled><span></span></label></div>
+            <div class="scenario-state"><span id="toggle-state">OFF</span><span id="status">Ожидание данных</span></div>
+            <div class="comparison"><div><label>Физический склад</label><span id="compare-physical">—</span></div><div class="bar"><i id="physical-bar"></i></div><div><label>Учетный отчет</label><span id="compare-book">—</span></div><div class="bar book-bar"><i id="book-bar"></i></div></div>
+            <p id="command" class="command-message" role="status" aria-live="polite"></p><button class="reset-button" id="reset" disabled><span>↺</span> Сбросить сценарий</button>
+          </section>
+          <section class="panel inspector" id="inspector"><div class="inspector-heading"><span class="section-icon">⌖</span>Выбранный объект</div><h3 id="selection">Склад концентрата</h3><span class="asset-id" id="selection-id">Stockpile_01</span><dl id="asset-details"><div><dt>Данные</dt><dd>Подключение…</dd></div></dl><p class="inspector-hint">Нажмите на технику или здание на сцене, чтобы увидеть его состояние.</p></section>
+        </aside>
+      </section>
+
+      <section class="flow-panel panel" id="flow-section" aria-label="Технологическая цепочка"><div class="flow-step"><span class="flow-number">01</span><div><small>Добыча</small><strong id="flow-mined">—</strong></div></div><span class="flow-arrow">→</span><div class="flow-step"><span class="flow-number">02</span><div><small>Переработано</small><strong id="flow-feed">—</strong></div></div><span class="flow-arrow">→</span><div class="flow-step"><span class="flow-number">03</span><div><small>Концентрат</small><strong id="flow-product">—</strong></div></div><span class="flow-arrow">→</span><div class="flow-step"><span class="flow-number">04</span><div><small>ЖД-отгрузка</small><strong id="flow-shipped">—</strong></div></div><span class="flow-note">Fe 43–45% <span>→</span> 55%</span></section>
+
+      <section class="analytics-grid" id="analytics">
+        <article class="panel chart-panel" id="chart-section"><div class="panel-heading"><div><p class="eyebrow">Независимая сверка</p><h2>Физический склад и учет</h2></div><div class="legend"><span><i class="teal-bg"></i>3D-скан</span><span><i class="red-bg"></i>Отчет</span></div></div><canvas id="chart" aria-label="История физического и учетного остатков"></canvas><p class="chart-caption">Сухая масса, тонны · история телеметрии Ditto</p></article>
+        <article class="panel fleet-panel"><div class="panel-heading"><div><p class="eyebrow">Диспетчерская</p><h2>Техника на маршруте</h2></div><span class="small-badge" id="fleet-count">7 объектов</span></div><div id="vehicles" class="vehicles"></div></article>
+      </section>
+      <section class="panel map-panel" id="map-section"><div class="panel-heading"><div><p class="eyebrow">Логистика и геозоны</p><h2>Каждый рейс — на своем маршруте</h2></div><select id="extent" aria-label="Область карты"><option value="mine">Карьер → фабрика</option><option value="rail">ЖД-коридор · 65 км</option></select></div><canvas id="map" aria-label="Координатная карта маршрутов и следов техники"></canvas><div class="map-caption"><span class="tiny-dot"></span>Геозона ±150 м<span>Двухполосная схема · GPS и состояния Ditto</span></div></section>
+      <section class="panel events-panel" id="events-section"><div class="panel-heading"><div><p class="eyebrow">Прозрачность изменений</p><h2>Аудиторский след</h2></div><span class="small-badge">Сохраняется при перезапуске</span></div><div class="table-scroll"><table><thead><tr><th>Событие</th><th>Время UTC</th><th>Сценарий</th><th>Физический остаток</th><th>Учетный остаток</th><th>Источник</th></tr></thead><tbody id="events"></tbody></table><div class="empty-state" id="events-empty">Здесь появятся подтвержденные изменения сценария.</div></div></section>
+      <footer><span>СТЕПНОЕ <i>·</i> Цифровой двойник на OpenEgiz</span><span>Синтетические датчики · сухая масса · пространственная схема</span></footer>
+    </main>
+  </div>
+  <script type="module" src="/stepnoe/app.js"></script>
+</body>
+</html>

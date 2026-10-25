@@ -81,18 +81,20 @@ def run_service_test(mqtt_port, http_port):
             wait(lambda: state()["mqtt_connected"])
             wait(lambda: len(received) == 14)
             wait(lambda: state()["twins"]["Processing_Plant"]["raw_inflow"]["properties"]["value"] > 0)
-            for command in (1, 1, 0):
+            for command in (1, 1, -1, -1, 0):
                 probe.publish("telemetry/stockpile/inject_fraud", str(command), qos=1, retain=True).wait_for_publish(3)
                 wait(lambda: state()["fraud"] == bool(command))
-                wait(lambda: received["telemetry/Mass_Balance"]["value"]["anomaly"]["properties"]["value"] == command)
+                wait(lambda: received["telemetry/Mass_Balance"]["value"]["fraud_offset"]["properties"]["value"] == 300 * command)
+                wait(lambda: state()["audit"]["fraud_offset"] == 300 * command)
                 audit = state()["audit"]
                 assert abs(audit["physical_residual"]) < 1e-6
-                assert abs(audit["fraud_offset"] - (300 if command else 0)) < 1e-6
-            req = Request(url + "/api/fraud", data=b'{"value":1}', headers={"Content-Type":"application/json"})
+                assert abs(audit["fraud_offset"] - 300 * command) < 1e-6
+            req = Request(url + "/api/fraud", data=b'{"value":-1}', headers={"Content-Type":"application/json"})
             with urlopen(req) as response:
                 assert response.status == 202
             wait(lambda: state()["fraud"])
-            print(f"PASS real MQTT transport: 14 twins, controls 1/1/0, HTTP -> broker -> model; preview {url}", flush=True)
+            wait(lambda: state()["audit"]["fraud_offset"] == -300)
+            print(f"PASS real MQTT transport: 14 twins, controls +1/+1/-1/-1/0, HTTP concealment -> broker -> model; preview {url}", flush=True)
             seconds = int(os.environ.get("STEP_NOE_PREVIEW_SECONDS", "0"))
             if seconds:
                 time.sleep(seconds)

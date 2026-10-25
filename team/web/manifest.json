@@ -1,0 +1,23 @@
+{
+  "version": "5ae010193479",
+  "three_version": "0.180.0",
+  "sha256": {
+    "index.html": "c186b7dbe5fff87a4d88f2e7ea70dcab9806d52fe9ebd50ba3cbe8ac8b399cdc",
+    "style.css": "9979b02c9e1000a9b2aedd19bc2baaad7b0ffd18e6afd4bf8be40d18e90f4c67",
+    "app.js": "9c8e4ce581194fe1b76841fd6b392b3cbfdcb6c429c9958ef14e7bedf521fc98",
+    "api.js": "91740f70c04ccad18c6c9e040cd88ff3a044c7109afca578f917779960effd10",
+    "controls.js": "ac17d8c22134175372cc213c341f43d6be8079523f65588800e3944977a5ee7d",
+    "telemetry.js": "8f8c596b8ade3fa52a417742f1e057f582bdd7baabf93b573badff559eea13c3",
+    "charts.js": "cfa66e101489ba49d5d879a004ae27a679e63c9ffff28dce45f559f83e602b1e",
+    "models.js": "38987a80377e7bb0fd2c5bf3fb038b56eede6e77bd9129fe8668def30b1f1dae",
+    "scene.js": "3dd5fcf202ed1ce3165953c5c89316d0d222108d2eb0cfee1d8d3266c4c6740e",
+    "layout.js": "218f647d990dc1acfa9c0d2c3407d05e89212682b3ed3dc1e6c1bcca291bb6f9",
+    "motion.js": "f547d3198e820a47dfdd9bae1fbca1a120eabae5712fc12a6e072e6401dbfd58",
+    "routes.js": "5faa35bd71986994888de0c07159ef7174f5923355ff23f6ef5f5f4701ccc97d",
+    "haul-road.js": "3210b2ac4de7273883bf4e2e2c39823bd659b15a3da2ddde3b2f6c9a58290525",
+    "vendor/three.module.js": "c8211c69345d2e9949dc7a8ac969380497aa0600a5a8ac6a459c8cd02dd9cb8a",
+    "vendor/three.core.js": "eb077d2417f61d3e6d9264c317cabc4ea35769ed6b0ab533067292a550784c20",
+    "vendor/OrbitControls.js": "b97879c748170baadeb3fb84cea1ffdf4674e283dc06042f34e2acb95a76042c",
+    "vendor/THREE-LICENSE.txt": "bfe119ea4fd413f5f7ca3fcd63adb0c4a073ed39daa2fe7d3e6b769e21272601"
+  }
+}

@@ -2,7 +2,7 @@
   "uid": "stepnoe-audit",
   "title": "Mass Balance & Anti-Fraud Audit",
   "schemaVersion": 39,
-  "version": 1,
+  "version": 2,
   "editable": true,
   "tags": [
     "stepnoe",
@@ -17,199 +17,102 @@
   },
   "panels": [
     {
-      "title": "Accounting status",
-      "type": "stat",
-      "datasource": {
-        "type": "influxdb",
-        "uid": "opentwins-influxdb"
-      },
+      "title": "Anti-Fraud Controls — Simulate Paper Fraud",
+      "type": "text",
+      "transparent": true,
       "gridPos": {
         "x": 0,
         "y": 0,
-        "w": 8,
-        "h": 4
+        "w": 24,
+        "h": 30
       },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "none",
-          "decimals": 2,
-          "color": {
-            "mode": "thresholds"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 1
-              }
-            ]
-          },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "BALANCE OK",
-                  "color": "green"
-                },
-                "1": {
-                  "text": "CRITICAL ANOMALY: Mass Balance Mismatch",
-                  "color": "red"
-                }
-              }
-            }
-          ]
-        },
-        "overrides": []
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "opentwins-influxdb"
-          },
-          "query": "from(bucket: \"default\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"mqtt_consumer\" and r.thingId == \"org.stepnoe:Mass_Balance\" and r._field == \"value_anomaly_properties_value\")\n  |> group(columns: [\"thingId\", \"_field\"])\n  |> last()\n  |> keep(columns: [\"_time\", \"_value\"])\n  |> yield(name: \"anomaly\")"
-        }
-      ],
       "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "colorMode": "background",
-        "graphMode": "none"
+        "mode": "html",
+        "content": "<iframe title=\"Anti-Fraud Controls — Simulate Paper Fraud\" src=\"/stepnoe/index.html?view=audit&amp;v=5ae010193479\" style=\"display:block;width:100%;height:100%;border:0;border-radius:16px;background:#101722\" allow=\"fullscreen\" loading=\"lazy\"></iframe>"
       },
       "id": 1
     },
     {
-      "title": "Unverified ore",
-      "type": "stat",
-      "datasource": {
-        "type": "influxdb",
-        "uid": "opentwins-influxdb"
-      },
-      "gridPos": {
-        "x": 8,
-        "y": 0,
-        "w": 8,
-        "h": 4
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "masst",
-          "decimals": 2
-        },
-        "overrides": []
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "opentwins-influxdb"
-          },
-          "query": "from(bucket: \"default\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"mqtt_consumer\" and r.thingId == \"org.stepnoe:Mass_Balance\" and r._field == \"value_fraud_offset_properties_value\")\n  |> group(columns: [\"thingId\", \"_field\"])\n  |> last()\n  |> keep(columns: [\"_time\", \"_value\"])\n  |> yield(name: \"fraud_offset\")"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "colorMode": "background",
-        "graphMode": "none"
-      },
-      "id": 2
-    },
-    {
-      "title": "Unverified / scanned stock",
-      "type": "stat",
-      "datasource": {
-        "type": "influxdb",
-        "uid": "opentwins-influxdb"
-      },
-      "gridPos": {
-        "x": 16,
-        "y": 0,
-        "w": 8,
-        "h": 4
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "decimals": 2
-        },
-        "overrides": []
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "opentwins-influxdb"
-          },
-          "query": "from(bucket: \"default\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"mqtt_consumer\" and r.thingId == \"org.stepnoe:Mass_Balance\" and r._field == \"value_discrepancy_pct_properties_value\")\n  |> group(columns: [\"thingId\", \"_field\"])\n  |> last()\n  |> keep(columns: [\"_time\", \"_value\"])\n  |> yield(name: \"discrepancy_pct\")"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "colorMode": "background",
-        "graphMode": "none"
-      },
-      "id": 3
-    },
-    {
-      "title": "Anti-Fraud Controls — Simulate Paper Fraud",
-      "type": "text",
-      "gridPos": {
-        "x": 0,
-        "y": 4,
-        "w": 24,
-        "h": 11
-      },
-      "options": {
-        "mode": "html",
-        "content": "<iframe title=\"Anti-Fraud Controls — Simulate Paper Fraud\" src=\"/stepnoe/?view=audit\" style=\"width:100%;height:100%;border:0\" loading=\"lazy\"></iframe>"
-      },
-      "id": 4
-    },
-    {
-      "title": "3D scan vs accounting",
+      "title": "3D-скан и учетный остаток",
       "type": "timeseries",
       "datasource": {
         "type": "influxdb",
         "uid": "opentwins-influxdb"
       },
+      "transparent": true,
+      "description": "Телеметрия Eclipse Ditto через InfluxDB. Все массы приведены к сухому веществу; начальный запас 3000 т учитывается отдельно.",
       "gridPos": {
         "x": 0,
-        "y": 15,
+        "y": 30,
         "w": 12,
-        "h": 7
+        "h": 9
       },
       "fieldConfig": {
         "defaults": {
           "unit": "masst",
-          "decimals": 2
+          "decimals": 1,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#69cbb6"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 7,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": false,
+            "axisBorderShow": false,
+            "axisGridShow": true,
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            }
+          }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Физический склад"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#69cbb6"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Учетный отчет"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#ed9aa5"
+                }
+              }
+            ]
+          }
+        ]
       },
       "targets": [
         {
@@ -238,27 +141,110 @@
           "mode": "multi"
         }
       },
-      "id": 5
+      "id": 2
     },
     {
-      "title": "Physical, book and Fe residuals",
+      "title": "Независимые балансы массы и железа",
       "type": "timeseries",
       "datasource": {
         "type": "influxdb",
         "uid": "opentwins-influxdb"
       },
+      "transparent": true,
+      "description": "Телеметрия Eclipse Ditto через InfluxDB. Все массы приведены к сухому веществу; начальный запас 3000 т учитывается отдельно.",
       "gridPos": {
         "x": 12,
-        "y": 15,
+        "y": 30,
         "w": 12,
-        "h": 7
+        "h": 9
       },
       "fieldConfig": {
         "defaults": {
           "unit": "masst",
-          "decimals": 2
+          "decimals": 1,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#69cbb6"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 7,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": false,
+            "axisBorderShow": false,
+            "axisGridShow": true,
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "axisSoftMin": -1,
+            "axisSoftMax": 1
+          }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Баланс массы"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#69cbb6"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Баланс учета"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#ed9aa5"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "C"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Баланс Fe"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#8faee0"
+                }
+              }
+            ]
+          }
+        ]
       },
       "targets": [
         {
@@ -295,27 +281,108 @@
           "mode": "multi"
         }
       },
-      "id": 6
+      "id": 3
     },
     {
-      "title": "Plant: feed = concentrate + tails",
+      "title": "Фабрика: руда = концентрат + хвосты",
       "type": "timeseries",
       "datasource": {
         "type": "influxdb",
         "uid": "opentwins-influxdb"
       },
+      "transparent": true,
+      "description": "Телеметрия Eclipse Ditto через InfluxDB. Все массы приведены к сухому веществу; начальный запас 3000 т учитывается отдельно.",
       "gridPos": {
         "x": 0,
-        "y": 22,
+        "y": 39,
         "w": 12,
-        "h": 7
+        "h": 8
       },
       "fieldConfig": {
         "defaults": {
           "unit": "masst",
-          "decimals": 2
+          "decimals": 1,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#69cbb6"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 7,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": false,
+            "axisBorderShow": false,
+            "axisGridShow": true,
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            }
+          }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Сырая руда"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#8faee0"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Концентрат"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#8faee0"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "C"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Хвосты"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#dfbc83"
+                }
+              }
+            ]
+          }
+        ]
       },
       "targets": [
         {
@@ -352,27 +419,127 @@
           "mode": "multi"
         }
       },
-      "id": 7
+      "id": 4
     },
     {
-      "title": "Fe grades and recovery",
+      "title": "Содержание Fe и извлечение",
       "type": "timeseries",
       "datasource": {
         "type": "influxdb",
         "uid": "opentwins-influxdb"
       },
+      "transparent": true,
+      "description": "Телеметрия Eclipse Ditto через InfluxDB. Все массы приведены к сухому веществу; начальный запас 3000 т учитывается отдельно.",
       "gridPos": {
         "x": 12,
-        "y": 22,
+        "y": 39,
         "w": 12,
-        "h": 7
+        "h": 8
       },
       "fieldConfig": {
         "defaults": {
           "unit": "percent",
-          "decimals": 2
+          "decimals": 1,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#69cbb6"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 7,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": false,
+            "axisBorderShow": false,
+            "axisGridShow": true,
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            }
+          }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Fe на входе"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#69cbb6"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Fe концентрата"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#8faee0"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "C"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Извлечение"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#dfbc83"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "D"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Fe хвостов"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#bfa8dc"
+                }
+              }
+            ]
+          }
+        ]
       },
       "targets": [
         {
@@ -417,7 +584,7 @@
           "mode": "multi"
         }
       },
-      "id": 8
+      "id": 5
     }
   ],
   "links": [
@@ -440,5 +607,5 @@
       "keepTime": true
     }
   ],
-  "description": "Stepnoe fictional iron-ore mine. Synthetic telemetry via MQTT -> Ditto -> Telegraf -> InfluxDB. Dry-tonne basis; opening inventory 3000 t. 3D scene uses a local Canvas renderer, not a compiled Unity scene."
+  "description": "ГОК «Степное». Пространственная Three.js-диорама с телеметрией Ditto, независимый баланс массы и Fe. Синтетические датчики, начальный запас 3000 т; физический склад и учетный объем отображаются раздельно."
 }

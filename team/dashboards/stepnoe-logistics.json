@@ -2,7 +2,7 @@
   "uid": "stepnoe-logistics",
   "title": "Logistics & Geofencing",
   "schemaVersion": 39,
-  "version": 1,
+  "version": 2,
   "editable": true,
   "tags": [
     "stepnoe",
@@ -17,39 +17,83 @@
   },
   "panels": [
     {
-      "title": "Live local map — truck and rail tracks / geofences",
+      "title": "Маршруты техники и геозоны",
       "type": "text",
+      "transparent": true,
       "gridPos": {
         "x": 0,
         "y": 0,
         "w": 24,
-        "h": 17
+        "h": 32
       },
       "options": {
         "mode": "html",
-        "content": "<iframe title=\"Live local map — truck and rail tracks / geofences\" src=\"/stepnoe/?view=map\" style=\"width:100%;height:100%;border:0\" loading=\"lazy\"></iframe>"
+        "content": "<iframe title=\"Маршруты техники и геозоны\" src=\"/stepnoe/index.html?view=map&amp;v=5ae010193479\" style=\"display:block;width:100%;height:100%;border:0;border-radius:16px;background:#101722\" allow=\"fullscreen\" loading=\"lazy\"></iframe>"
       },
       "id": 1
     },
     {
-      "title": "Truck 01 payload",
+      "title": "Самосвал № 1 · загрузка",
       "type": "timeseries",
       "datasource": {
         "type": "influxdb",
         "uid": "opentwins-influxdb"
       },
+      "transparent": true,
+      "description": "Телеметрия Eclipse Ditto через InfluxDB. Все массы приведены к сухому веществу; начальный запас 3000 т учитывается отдельно.",
       "gridPos": {
         "x": 0,
-        "y": 17,
+        "y": 32,
         "w": 12,
-        "h": 7
+        "h": 8
       },
       "fieldConfig": {
         "defaults": {
           "unit": "masst",
-          "decimals": 2
+          "decimals": 1,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#69cbb6"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 7,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": false,
+            "axisBorderShow": false,
+            "axisGridShow": true,
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            }
+          }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Груз"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#69cbb6"
+                }
+              }
+            ]
+          }
+        ]
       },
       "targets": [
         {
@@ -73,24 +117,67 @@
       "id": 2
     },
     {
-      "title": "Truck 02 payload",
+      "title": "Самосвал № 2 · загрузка",
       "type": "timeseries",
       "datasource": {
         "type": "influxdb",
         "uid": "opentwins-influxdb"
       },
+      "transparent": true,
+      "description": "Телеметрия Eclipse Ditto через InfluxDB. Все массы приведены к сухому веществу; начальный запас 3000 т учитывается отдельно.",
       "gridPos": {
         "x": 12,
-        "y": 17,
+        "y": 32,
         "w": 12,
-        "h": 7
+        "h": 8
       },
       "fieldConfig": {
         "defaults": {
           "unit": "masst",
-          "decimals": 2
+          "decimals": 1,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#69cbb6"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 7,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": false,
+            "axisBorderShow": false,
+            "axisGridShow": true,
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            }
+          }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Груз"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#69cbb6"
+                }
+              }
+            ]
+          }
+        ]
       },
       "targets": [
         {
@@ -114,24 +201,86 @@
       "id": 3
     },
     {
-      "title": "Rail: loaded vs departed",
+      "title": "ЖД: погрузка и подтвержденная отгрузка",
       "type": "timeseries",
       "datasource": {
         "type": "influxdb",
         "uid": "opentwins-influxdb"
       },
+      "transparent": true,
+      "description": "Телеметрия Eclipse Ditto через InfluxDB. Все массы приведены к сухому веществу; начальный запас 3000 т учитывается отдельно.",
       "gridPos": {
         "x": 0,
-        "y": 24,
+        "y": 40,
         "w": 24,
-        "h": 7
+        "h": 8
       },
       "fieldConfig": {
         "defaults": {
           "unit": "masst",
-          "decimals": 2
+          "decimals": 1,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#69cbb6"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 7,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": false,
+            "axisBorderShow": false,
+            "axisGridShow": true,
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            }
+          }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Загружено"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#69cbb6"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Отгружено"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#8faee0"
+                }
+              }
+            ]
+          }
+        ]
       },
       "targets": [
         {
@@ -183,5 +332,5 @@
       "keepTime": true
     }
   ],
-  "description": "Stepnoe fictional iron-ore mine. Synthetic telemetry via MQTT -> Ditto -> Telegraf -> InfluxDB. Dry-tonne basis; opening inventory 3000 t. 3D scene uses a local Canvas renderer, not a compiled Unity scene."
+  "description": "ГОК «Степное». Пространственная Three.js-диорама с телеметрией Ditto, независимый баланс массы и Fe. Синтетические датчики, начальный запас 3000 т; физический склад и учетный объем отображаются раздельно."
 }

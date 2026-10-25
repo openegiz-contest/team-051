@@ -20,8 +20,12 @@ services:
     environment:
       MQTT_HOST: mosquitto
       MQTT_PORT: "1883"
+      HTTP_PORT: "8085"
       SIM_SPEEDUP: ${SIM_SPEEDUP:-30}
       FRAUD_MODE: ${FRAUD_MODE:-fixed}
+      FRAUD_DRIFT_RATE_TPH: ${FRAUD_DRIFT_RATE_TPH:-5}
+      MOISTURE_PCT: ${MOISTURE_PCT:-3}
+      LIDAR_NOISE_PCT: ${LIDAR_NOISE_PCT:-0.5}
       DITTO_URL: http://ditto-nginx:80
       DITTO_PASSWORD: ${DITTO_PASSWORD}
     volumes:
@@ -32,7 +36,7 @@ services:
       mosquitto:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8085/health', timeout=3)"]
       interval: 10s
       timeout: 5s
       retries: 12

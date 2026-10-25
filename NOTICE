@@ -31,3 +31,7 @@ builds it locally from a pinned upstream commit and never publishes an image.
 Eclipse Ditto, Grafana, InfluxDB, Telegraf, Eclipse Mosquitto and MongoDB
 container images are pulled from their publishers at install time and are
 covered by their own licenses.
+
+Three.js 0.180.0 and OrbitControls, vendored under team/web/vendor/,
+are Copyright (c) 2010-2025 three.js authors and distributed under MIT.
+See team/web/vendor/THREE-LICENSE.txt and README.md for source attribution.

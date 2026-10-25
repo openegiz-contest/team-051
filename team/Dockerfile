@@ -5,5 +5,5 @@ RUN pip install --no-cache-dir -r requirements.txt && useradd --uid 10001 --crea
 COPY . .
 USER stepnoe
 ENV PYTHONUNBUFFERED=1 STATE_DB=/data/stepnoe.db
-EXPOSE 8000
+EXPOSE 8085
 CMD ["python", "service.py"]
